@@ -1,13 +1,21 @@
 export interface Federation {
-    federation_id: string,
-    mint_pubkey: string
-    description: string
-    date_created: string,
-    details: FederationDetails
+    federation_id: string;
+    mint_pubkey: string;
+    details: FederationDetails;
 }
 
 export interface FederationDetails {
-    name: string
-    description: string
-    url?: string
+    name: string;
+    description: string;
+    url?: string;
+    date_created: string;
+    active: boolean;
 }
+
+export enum Sort {
+    Ascending,
+    Descending,
+    Date,
+}
+
+export type Filter = undefined | boolean

@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
 import { Header, FederationCard } from './components';
-import { Federation } from './federation.types';
+import { Federation, Filter, Sort } from './federation.types';
 import { data } from './federation.data';
 import { Stack } from '@chakra-ui/react';
 
 export const Admin = React.memo(() => {
     const [fedlist, setFedlist] = useState<Federation[]>(data.federations);
 
-    const filterFederations = (filter: undefined | boolean) => {
+    const filterFederations = (filter: Filter) => {
         let federations = filter === undefined ? data.federations : data.federations.filter((federation) => federation.details.active === filter);
         setFedlist(federations);
     };
-
-    enum Sort {
-        Ascending,
-        Descending,
-        Date,
-    }
 
     const sortFederations = (sort: Sort) => {
         const fedListCopy = [...fedlist];
@@ -51,27 +45,7 @@ export const Admin = React.memo(() => {
     return (
         <div className='App'>
             <div style={wrapperStyles}>
-                <Header
-                    data={data.federations}
-                    ascending={() => {
-                        sortFederations(Sort.Ascending);
-                    }}
-                    descending={() => {
-                        sortFederations(Sort.Descending);
-                    }}
-                    datecCreated={() => {
-                        sortFederations(Sort.Date);
-                    }}
-                    isActive={() => {
-                        filterFederations(true);
-                    }}
-                    isArchived={() => {
-                        filterFederations(false);
-                    }}
-                    isAll={() => {
-                        filterFederations(undefined);
-                    }}
-                />
+                <Header data={data.federations} filterCallback={filterFederations} sortCallback={sortFederations} />
                 <Stack spacing={6} marginTop={6}>
                     {fedlist.map((federation: Federation) => {
                         return <FederationCard key={federation.mint_pubkey} federation={federation} onClick={() => console.log('clicked')} />;
