@@ -45,7 +45,12 @@ export const Admin = React.memo(() => {
     return (
         <div className='App'>
             <div style={wrapperStyles}>
-                <Header data={data.federations} filterCallback={filterFederations} sortCallback={sortFederations} />
+                <Header
+                    connectFedCallback={() => console.log('')}
+                    data={data.federations}
+                    filterCallback={filterFederations}
+                    sortCallback={sortFederations}
+                />
                 <Stack spacing={6} marginTop={6}>
                     {fedlist.map((federation: Federation) => {
                         return <FederationCard key={federation.mint_pubkey} federation={federation} onClick={() => console.log('clicked')} />;

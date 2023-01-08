@@ -9,6 +9,7 @@ export type HeaderProps = {
     data: Federation[];
     filterCallback: (filter: Filter) => void;
     sortCallback: (sort: Sort) => void;
+    connectFedCallback: () => void;
 };
 
 export const Header = (props: HeaderProps): JSX.Element => {
@@ -21,13 +22,9 @@ export const Header = (props: HeaderProps): JSX.Element => {
         console.log(searchValue);
     };
 
-    const handleNewFederation = () => {
-        console.log('new federation added');
-    };
-
     return (
         <HStack>
-            <Button label='Connect Federation' onClick={handleNewFederation} />
+            <Button label='Connect Federation' onClick={props.connectFedCallback} />
             <Input value={searchValue} placeholder='search for item' onChange={handleSearch} />
             <HStack flexDirection='row' alignItems={'center'}>
                 {/* sort menu button */}
