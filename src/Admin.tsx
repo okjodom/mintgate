@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Header, FederationCard } from './components';
+import { Header, FederationCard, ConnectFederation } from './components';
 import { Federation, Filter, Sort } from './federation.types';
 import { data } from './federation.data';
-import { Stack } from '@chakra-ui/react';
+import { Box, Stack, useDisclosure } from '@chakra-ui/react';
 
 export const Admin = React.memo(() => {
     const [fedlist, setFedlist] = useState<Federation[]>(data.federations);
+    const { isOpen: showConnectFed, onToggle: toggleShowConnectFed } = useDisclosure();
 
     const filterFederations = (filter: Filter) => {
         let federations = filter === undefined ? data.federations : data.federations.filter((federation) => federation.details.active === filter);
@@ -43,24 +44,19 @@ export const Admin = React.memo(() => {
     };
 
     return (
-        <div className='App'>
-            <div style={wrapperStyles}>
-                <Header
-                    connectFedCallback={() => console.log('')}
-                    data={data.federations}
-                    filterCallback={filterFederations}
-                    sortCallback={sortFederations}
-                />
-                <Stack spacing={6} marginTop={6}>
-                    {fedlist.map((federation: Federation) => {
-                        return <FederationCard key={federation.mint_pubkey} federation={federation} onClick={() => console.log('clicked')} />;
-                    })}
-                </Stack>
-            </div>
-        </div>
+        <Box m='10'>
+            <Header
+                toggleShowConnectFed={toggleShowConnectFed}
+                data={data.federations}
+                filterCallback={filterFederations}
+                sortCallback={sortFederations}
+            />
+            <ConnectFederation isOpen={showConnectFed} />
+            <Stack spacing={6} pt={6}>
+                {fedlist.map((federation: Federation) => {
+                    return <FederationCard key={federation.mint_pubkey} federation={federation} onClick={() => console.log('clicked')} />;
+                })}
+            </Stack>
+        </Box>
     );
 });
-
-const wrapperStyles = {
-    margin: 32,
-};

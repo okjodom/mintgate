@@ -9,7 +9,7 @@ export type HeaderProps = {
     data: Federation[];
     filterCallback: (filter: Filter) => void;
     sortCallback: (sort: Sort) => void;
-    connectFedCallback: () => void;
+    toggleShowConnectFed: () => void;
 };
 
 export const Header = (props: HeaderProps): JSX.Element => {
@@ -24,7 +24,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
 
     return (
         <HStack>
-            <Button label='Connect Federation' onClick={props.connectFedCallback} />
+            <Button label='Connect Federation' onClick={props.toggleShowConnectFed} />
             <Input value={searchValue} placeholder='search for item' onChange={handleSearch} />
             <HStack flexDirection='row' alignItems={'center'}>
                 {/* sort menu button */}
