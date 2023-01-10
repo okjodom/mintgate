@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { Tab, TabPanel, Stack, Card, CardBody, CardFooter, Image, Heading, Text, Spacer, Flex, Link, Progress, Badge } from '@chakra-ui/react'
-import { Button } from '.';
+import { Box, TabPanel, Stack, Card, CardBody, CardFooter, Image, Heading, Text, Spacer, Flex, Link, Progress, Badge } from '@chakra-ui/react'
+import { TriangleUpIcon } from '@chakra-ui/icons';
+import { Button, TabHeader } from '.';
 
-
-interface DepositTabProps {
+export const DepositTabHeader = (): JSX.Element => {
+    return (
+        <TabHeader>
+            <Box as='span' mr='2'>
+                <TriangleUpIcon />
+            </Box>
+            Deposit
+        </TabHeader>
+    )
 }
 
 enum DepositStatus {
@@ -12,9 +20,7 @@ enum DepositStatus {
     Complete
 }
 
-export const DepositTabHeader = (): JSX.Element => {
-    return <Tab>Deposit</Tab>
-}
+interface DepositTabProps {}
 
 // TODO: Make API call to get new deposit address
 const getNewDepositAddress = (): string => {
