@@ -5,4 +5,4 @@ export { Input } from './Input';
 export { ConnectFederation } from './ConnectFederation';
 export { TabHeader } from './TabHeader';
 export { InfoTab, InfoTabHeader, InfoTabIconButton } from './InfoTab';
-export { DepositTab, DepositTabHeader } from './DepositTab';
+export { DepositTab, DepositTabHeader, DepositTabIconButton } from './DepositTab';

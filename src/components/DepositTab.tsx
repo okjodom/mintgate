@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TabPanel, Stack, Card, CardBody, CardFooter, Image, Heading, Text, Spacer, Flex, Link, Progress, Badge } from '@chakra-ui/react'
+import { Box, TabPanel, Stack, Card, CardBody, CardFooter, Image, Heading, Text, Spacer, Flex, Link, Progress, Badge, IconButton } from '@chakra-ui/react'
 import { TriangleUpIcon } from '@chakra-ui/icons';
 import { Button, TabHeader } from '.';
 
@@ -11,6 +11,16 @@ export const DepositTabHeader = (): JSX.Element => {
             </Box>
             Deposit
         </TabHeader>
+    )
+}
+
+type DepositTabIconButtonProps = {
+    onClick: () => void;
+}
+
+export const DepositTabIconButton = (props: DepositTabIconButtonProps): JSX.Element => {
+    return (
+        <IconButton onClick={props.onClick} aria-label={''}><TriangleUpIcon /></IconButton>
     )
 }
 
