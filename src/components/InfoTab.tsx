@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TabPanel } from '@chakra-ui/react'
+import { Box, IconButton, TabPanel } from '@chakra-ui/react'
 import { InfoIcon } from '@chakra-ui/icons';
 import { TabHeader } from '.';
 
@@ -34,3 +34,13 @@ export const InfoTab = React.memo((props: InfoTabProps): JSX.Element => {
         </section>
     </TabPanel>
 });
+
+type InfoTabIconButtonProps = {
+    onClick: () => void;
+}
+
+export const InfoTabIconButton = (props: InfoTabIconButtonProps): JSX.Element => {
+    return (
+        <IconButton onClick={props.onClick} aria-label={''}><InfoIcon /></IconButton>
+    )
+}

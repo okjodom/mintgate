@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import { Tabs, TabList, TabPanels } from '@chakra-ui/react'
 import { Federation } from '../federation.types';
-import { Button, InfoTabHeader, InfoTab, DepositTab, DepositTabHeader } from '.';
+import { InfoTab, InfoTabHeader, InfoTabIconButton, DepositTab, DepositTabHeader } from '.';
 
 interface FederationProps {
     federation: Federation;
     onClick: () => void;
 }
 
+enum DetailsView {
+    Off = -1,
+    InfoTab = 0,
+    WithdrawTab = 1,
+}
+
 export const FederationCard = (props: FederationProps): JSX.Element => {
     const { mint_pubkey, details } = props.federation;
 
-    const [showDetails, setShowDetails] = useState<boolean>(false);
+    const [visibleTab, setVisibleTab] = useState<DetailsView>(DetailsView.Off);
 
     const getFederationName = (name: string): string => {
         return name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase();
@@ -31,10 +37,10 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                         </section>
                     </div>
                     <section>
-                        <Button label='details' onClick={() => setShowDetails(!showDetails)} />
+                        <InfoTabIconButton onClick={() => setVisibleTab(DetailsView.InfoTab)} />
                     </section>
                 </div>
-                {showDetails && <Tabs>
+                {visibleTab >= 0 && <Tabs>
                     <TabList>
                         <InfoTabHeader />
                         <DepositTabHeader />
