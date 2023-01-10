@@ -1,10 +1,14 @@
 import React from 'react';
-import { TabPanel } from '@chakra-ui/react'
+import { Box, TabPanel } from '@chakra-ui/react'
+import { InfoIcon } from '@chakra-ui/icons';
 import { TabHeader } from '.';
 
 export const InfoTabHeader = (): JSX.Element => {
     return (
         <TabHeader>
+            <Box as='span' mr='2'>
+                <InfoIcon />
+            </Box>
             Info
         </TabHeader>
     )
