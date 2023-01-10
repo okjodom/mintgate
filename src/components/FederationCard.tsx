@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Tabs, TabList, TabPanels } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, IconButton } from '@chakra-ui/react'
 import { Federation } from '../federation.types';
 import { InfoTab, InfoTabHeader, InfoTabIconButton, DepositTab, DepositTabHeader } from '.';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
 interface FederationProps {
     federation: Federation;
@@ -38,6 +39,9 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                     </div>
                     <section>
                         <InfoTabIconButton onClick={() => setVisibleTab(DetailsView.InfoTab)} />
+                        <IconButton onClick={() => { visibleTab > -1 ? setVisibleTab(DetailsView.Off) : setVisibleTab(DetailsView.InfoTab); }} aria-label={''}>
+                            {visibleTab >= 0 ? <ViewOffIcon /> : <ViewIcon />}
+                        </IconButton>
                     </section>
                 </div>
                 {visibleTab >= 0 && <Tabs>
