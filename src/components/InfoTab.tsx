@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import { Tab, TabPanel } from '@chakra-ui/react'
+import React from 'react';
+import { Box, TabPanel } from '@chakra-ui/react'
+import { InfoIcon } from '@chakra-ui/icons';
+import { TabHeader, IconButton, IconButtonProps } from '.';
 
-interface InfoTabHeaderProps {
+export const InfoTabHeader = (): JSX.Element => {
+    return (
+        <TabHeader>
+            <Box as='span' mr='2'>
+                <InfoIcon />
+            </Box>
+            Info
+        </TabHeader>
+    )
 }
 
 interface InfoTabProps {
     date_created: string;
     description: string;
-}
-
-export const InfoTabHeader = (props: InfoTabHeaderProps): JSX.Element => {
-    return <Tab>Info</Tab>
 }
 
 export const InfoTab = React.memo((props: InfoTabProps): JSX.Element => {
@@ -28,3 +34,13 @@ export const InfoTab = React.memo((props: InfoTabProps): JSX.Element => {
         </section>
     </TabPanel>
 });
+
+type InfoTabIconButtonProps = IconButtonProps &  {
+    onClick: () => void;
+}
+
+export const InfoTabIconButton = (props: InfoTabIconButtonProps): JSX.Element => {
+    return (
+        <IconButton onClick={props.onClick} aria-label={''}><InfoIcon /></IconButton>
+    )
+}

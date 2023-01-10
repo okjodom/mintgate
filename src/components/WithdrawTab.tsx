@@ -1,10 +1,18 @@
 
 import React from 'react';
-import { Tab, TabPanel, Stack } from '@chakra-ui/react'
-import { Input, Button } from '.';
+import { TabPanel, Stack, Box } from '@chakra-ui/react'
+import { TriangleDownIcon } from '@chakra-ui/icons';
+import { Input, TabHeader, Button, IconButton, IconButtonProps } from '.';
 
 export const WithdrawTabHeader = (): JSX.Element => {
-    return <Tab>Withdraw</Tab>
+    return (
+        <TabHeader>
+            <Box as='span' mr='2'>
+                <TriangleDownIcon />
+            </Box>
+            Withdraw
+        </TabHeader>
+    )
 }
 
 interface WithdrawTabProps {
@@ -38,3 +46,13 @@ export const WithdrawTab = React.memo((props: WithdrawTabProps): JSX.Element => 
         </Stack>
     </TabPanel>
 });
+
+type WithdrawTabIconButtonProps = IconButtonProps &  {
+    onClick: () => void;
+}
+
+export const WithdrawTabIconButton = (props: WithdrawTabIconButtonProps): JSX.Element => {
+    return (
+        <IconButton onClick={props.onClick} aria-label={''}><TriangleDownIcon /></IconButton>
+    )
+}

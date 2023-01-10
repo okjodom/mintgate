@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
-import { Tabs, TabList, TabPanels } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Flex } from '@chakra-ui/react'
+import { ViewOffIcon, ViewIcon } from '@chakra-ui/icons';
 import { Federation } from '../federation.types';
-import { Button, InfoTabHeader, InfoTab, WithdrawTabHeader, WithdrawTab } from '.';
+import { IconButton, InfoTabHeader, InfoTabIconButton, InfoTab, WithdrawTabHeader, WithdrawTab, WithdrawTabIconButton } from '.';
 
 interface FederationProps {
     federation: Federation;
     onClick: () => void;
 }
 
+enum DetailsView {
+    Off = -1,
+    InfoTab = 0,
+    WithdrawTab = 1,
+}
+
 export const FederationCard = (props: FederationProps): JSX.Element => {
     const { mint_pubkey, details } = props.federation;
 
-    const [showDetails, setShowDetails] = useState<boolean>(false);
+    const [visibleTab, setVisibleTab] = useState<DetailsView>(DetailsView.Off);
 
     const getFederationName = (name: string): string => {
         return name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase();
@@ -30,19 +37,23 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                             <p>{mint_pubkey}</p>
                         </section>
                     </div>
-                    <section>
-                        <Button label='details' onClick={() => setShowDetails(!showDetails)} />
-                    </section>
+                    <Flex>
+                        <InfoTabIconButton onClick={() => setVisibleTab(DetailsView.InfoTab)} />
+                        {/* <WithdrawTabIconButton onClick={() => setVisibleTab(DetailsView.WithdrawTab)} /> */}
+                        <IconButton onClick={() => { visibleTab > -1 ? setVisibleTab(DetailsView.Off) : setVisibleTab(DetailsView.InfoTab); }} aria-label={''}>
+                            {visibleTab > -1 ? <ViewOffIcon /> : <ViewIcon />}
+                        </IconButton>
+                    </Flex>
                 </div>
-                {showDetails && <Tabs>
+                {visibleTab >= 0 && <Tabs index={visibleTab} onChange={(visibleTab) => setVisibleTab(visibleTab)}>
                     <TabList>
                         <InfoTabHeader />
-                        <WithdrawTabHeader />
+                        {/* <WithdrawTabHeader /> */}
                     </TabList>
 
                     <TabPanels>
-                        <InfoTab {...details}/>
-                        <WithdrawTab balance_btc={1}/>
+                        <InfoTab {...details} />
+                        {/* <WithdrawTab balance_btc={1} /> */}
                     </TabPanels>
                 </Tabs>}
             </main>
