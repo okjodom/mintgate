@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabList, TabPanels } from '@chakra-ui/react'
 import { Federation } from '../federation.types';
-import { Button, InfoTabHeader, InfoTab } from '.';
+import { Button, InfoTabHeader, InfoTab, WithdrawTabHeader, WithdrawTab } from '.';
 
 interface FederationProps {
     federation: Federation;
@@ -37,10 +37,12 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                 {showDetails && <Tabs>
                     <TabList>
                         <InfoTabHeader />
+                        <WithdrawTabHeader />
                     </TabList>
 
                     <TabPanels>
                         <InfoTab {...details}/>
+                        <WithdrawTab balance_btc={1}/>
                     </TabPanels>
                 </Tabs>}
             </main>
