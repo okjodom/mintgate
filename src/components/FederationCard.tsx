@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, TabList, TabPanels, IconButton } from '@chakra-ui/react'
+import { Flex, Tabs, TabList, TabPanels, IconButton } from '@chakra-ui/react'
 import { Federation } from '../federation.types';
 import { InfoTab, InfoTabHeader, InfoTabIconButton, DepositTab, DepositTabHeader } from '.';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -37,12 +37,12 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                             <p>{mint_pubkey}</p>
                         </section>
                     </div>
-                    <section>
+                    <Flex gap={0.5}>
                         <InfoTabIconButton onClick={() => setVisibleTab(DetailsView.InfoTab)} />
                         <IconButton onClick={() => { visibleTab > -1 ? setVisibleTab(DetailsView.Off) : setVisibleTab(DetailsView.InfoTab); }} aria-label={''}>
                             {visibleTab >= 0 ? <ViewOffIcon /> : <ViewIcon />}
                         </IconButton>
-                    </section>
+                    </Flex>
                 </div>
                 {visibleTab >= 0 && <Tabs>
                     <TabList>
