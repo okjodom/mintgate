@@ -1,5 +1,5 @@
 {
-	"name": "gwadmin",
+	"name": "mintgate",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
@@ -46,7 +46,7 @@
 	"lint-staged": {
 		"**/*.{js,jsx,ts,tsx}": [
 			"npx prettier --write",
-			"npx eslint --fix"
+			"npx eslint --fix -c .eslintrc.json"
 		]
 	},
 	"devDependencies": {
@@ -60,8 +60,8 @@
 		"eslint-plugin-n": "^15.0.0",
 		"eslint-plugin-promise": "^6.0.0",
 		"eslint-plugin-react": "^7.32.0",
+		"husky": "^8.0.0",
 		"lint-staged": "^13.1.0",
-		"prettier": "^2.8.3",
-		"husky": "^8.0.0"
+		"prettier": "^2.8.3"
 	}
 }
