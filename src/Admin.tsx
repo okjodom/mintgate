@@ -68,7 +68,7 @@ export const Admin = React.memo(() => {
                 filterCallback={filterFederations}
                 sortCallback={sortFederations}
             />
-            <ConnectLightning isOpen={showConnectLn} proposeGatewayLightningService={proposeGatewayLightningService} />
+            <ConnectLightning isOpen={showConnectLn} isLnConnected={isLnConnected} proposeGatewayLightningService={proposeGatewayLightningService} />
             <ConnectFederation isOpen={showConnectFed} />
             <Stack spacing={6} pt={6}>
                 {fedlist.map((federation: Federation) => {

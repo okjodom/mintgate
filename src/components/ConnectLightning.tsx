@@ -4,15 +4,17 @@ import { isWebUri } from "valid-url";
 import { Button, Input } from ".";
 
 export type ConnectLightningButtonProps = {
+  isLnConnected: boolean;
   onClick: () => void;
 };
 
 export const ConnectLightningButton = (props: ConnectLightningButtonProps) => {
-  return <Button label="Connect Lightning" onClick={props.onClick} />;
+  return <Button label={`${props.isLnConnected ? "Replace" : "Connect"} Lightning`} onClick={props.onClick} />;
 };
 
 export type ConnectLightningProps = {
   isOpen: boolean;
+  isLnConnected: boolean;
   proposeGatewayLightningService: (url: URL) => Promise<void>;
 };
 
@@ -64,7 +66,7 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
           alignItems="flex-end"
         >
           <Input
-            labelName="Connect Lightning:"
+            labelName={`${props.isLnConnected ? "Replace" : "Connect"} Lightning:`}
             placeHolder="Enter url to Gateway lightning service"
             value={url.value}
             onChange={(event) => handleInputString(event)}
