@@ -15,15 +15,6 @@ export type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps): JSX.Element => {
-    const [searchValue, setSearchValue] = useState<string>('');
-
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault();
-        const { value } = event.target;
-        setSearchValue(value);
-        console.log(searchValue);
-    };
-
     return (
         <Flex>
             <Flex alignItems='center' gap={2}>
