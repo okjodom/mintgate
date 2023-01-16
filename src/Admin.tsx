@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Header, FederationCard, ConnectFederation } from './components';
+import { Box, Stack } from '@chakra-ui/react';
+import {
+    Header,
+    FederationCard,
+    ConnectFederation,
+    ConnectLightning,
+} from './components';
 import { Federation, Filter, Sort } from './federation.types';
 import { data } from './federation.data';
-import { Box, Stack, useDisclosure } from '@chakra-ui/react';
 
 export const Admin = React.memo(() => {
     const [fedlist, setFedlist] = useState<Federation[]>(data.federations);
-    const { isOpen: showConnectFed, onToggle: toggleShowConnectFed } = useDisclosure();
+    const [isLnConnected] = useState<boolean>(false);
+
+    const [ showConnectLn, toggleShowConnectLn ] = useState<boolean>(true);
+    const [ showConnectFed, toggleShowConnectFed ] = useState<boolean>(false);
 
     const filterFederations = (filter: Filter) => {
         let federations = filter === undefined ? data.federations : data.federations.filter((federation) => federation.details.active === filter);
@@ -46,11 +54,14 @@ export const Admin = React.memo(() => {
     return (
         <Box m='10'>
             <Header
-                toggleShowConnectFed={toggleShowConnectFed}
                 data={data.federations}
+                isLnConnected={isLnConnected}
+                toggleShowConnectLn={() => toggleShowConnectLn(!showConnectLn)}
+                toggleShowConnectFed={() => toggleShowConnectFed(!showConnectFed)}
                 filterCallback={filterFederations}
                 sortCallback={sortFederations}
             />
+            <ConnectLightning isOpen={showConnectLn} />
             <ConnectFederation isOpen={showConnectFed} />
             <Stack spacing={6} pt={6}>
                 {fedlist.map((federation: Federation) => {

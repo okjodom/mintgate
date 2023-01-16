@@ -3,13 +3,15 @@ import { Menu, MenuButton, MenuItem, MenuList, Flex, Spacer } from '@chakra-ui/r
 import { Button as ChakraButton } from '@chakra-ui/react';
 import { FiChevronDown } from 'react-icons/fi';
 import { Federation, Filter, Sort } from '../federation.types';
-import { Button } from './Button';
+import { Button, ConnectLightningButton } from '.';
 
 export type HeaderProps = {
     data: Federation[];
+    isLnConnected: boolean;
+    toggleShowConnectLn: () => void;
+    toggleShowConnectFed: () => void;
     filterCallback: (filter: Filter) => void;
     sortCallback: (sort: Sort) => void;
-    toggleShowConnectFed: () => void;
 };
 
 export const Header = (props: HeaderProps): JSX.Element => {
@@ -24,7 +26,10 @@ export const Header = (props: HeaderProps): JSX.Element => {
 
     return (
         <Flex>
-            <Button label='Connect Federation' onClick={props.toggleShowConnectFed} />
+            <Flex alignItems='center' gap={2}>
+                <ConnectLightningButton onClick={props.toggleShowConnectLn} />
+                <Button label='Connect Federation' onClick={props.toggleShowConnectFed} disabled={!props.isLnConnected} />
+            </Flex>
             <Spacer />
             <Flex alignItems='center' gap='2'>
                 {/* sort menu button */}
