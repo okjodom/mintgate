@@ -18,7 +18,7 @@ export const Header = (props: HeaderProps): JSX.Element => {
     return (
         <Flex>
             <Flex alignItems='center' gap={2}>
-                <ConnectLightningButton onClick={props.toggleShowConnectLn} />
+                <ConnectLightningButton onClick={props.toggleShowConnectLn} isLnConnected={props.isLnConnected} />
                 <Button label='Connect Federation' onClick={props.toggleShowConnectFed} disabled={!props.isLnConnected} />
             </Flex>
             <Spacer />
