@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Collapse, HStack } from "@chakra-ui/react";
+import { isWebUri } from "valid-url";
 import { Button, Input } from ".";
 
 export type ConnectLightningButtonProps = {
@@ -14,14 +15,24 @@ export type ConnectLightningProps = {
   isOpen: boolean;
 };
 
+interface LnrpcURL {
+  value: string;
+  isValid: boolean;
+}
+
 export const ConnectLightning = (props: ConnectLightningProps) => {
-  const [inputString, setInputString] = useState<string>("");
+  const [url, updateUrl] = useState<LnrpcURL>({ value: "", isValid: false });
 
   const handleInputString = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
+
     const { value } = event.target;
-    // TODO: Validate value and show status
-    setInputString(value);
+    let validatedValue = isWebUri(value);
+    if (validatedValue === undefined) {
+      updateUrl({ value, isValid: false });
+    } else {
+      updateUrl({ value: validatedValue, isValid: true });
+    }
   };
 
   return (
@@ -39,7 +50,7 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
           <Input
             labelName="Connect Lightning:"
             placeHolder="Enter url to Gateway lightning service"
-            value={inputString}
+            value={url.value}
             onChange={(event) => handleInputString(event)}
           />
           <Button
@@ -47,7 +58,7 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
             borderRadius="4"
             onClick={() => console.log("clicked")}
             height="48px"
-            disabled={true}
+            disabled={!url.isValid}
           />
         </HStack>
       </Box>
