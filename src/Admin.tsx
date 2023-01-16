@@ -11,7 +11,7 @@ import { data } from './federation.data';
 
 export const Admin = React.memo(() => {
     const [fedlist, setFedlist] = useState<Federation[]>(data.federations);
-    const [isLnConnected] = useState<boolean>(false);
+    const [isLnConnected, updateIsLnConnected] = useState<boolean>(false);
 
     const [ showConnectLn, toggleShowConnectLn ] = useState<boolean>(true);
     const [ showConnectFed, toggleShowConnectFed ] = useState<boolean>(false);
@@ -51,6 +51,13 @@ export const Admin = React.memo(() => {
         }
     };
 
+    // TODO: Make real api call to connect gateway to proposed lightning rpc service
+    const proposeGatewayLightningService = async (url: URL) => {
+        console.log(url);
+        updateIsLnConnected(true);
+        toggleShowConnectLn(false);
+    };
+
     return (
         <Box m='10'>
             <Header
@@ -61,7 +68,7 @@ export const Admin = React.memo(() => {
                 filterCallback={filterFederations}
                 sortCallback={sortFederations}
             />
-            <ConnectLightning isOpen={showConnectLn} />
+            <ConnectLightning isOpen={showConnectLn} proposeGatewayLightningService={proposeGatewayLightningService} />
             <ConnectFederation isOpen={showConnectFed} />
             <Stack spacing={6} pt={6}>
                 {fedlist.map((federation: Federation) => {
