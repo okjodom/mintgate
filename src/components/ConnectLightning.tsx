@@ -13,6 +13,7 @@ export const ConnectLightningButton = (props: ConnectLightningButtonProps) => {
 
 export type ConnectLightningProps = {
   isOpen: boolean;
+  proposeGatewayLightningService: (url: URL) => Promise<void>;
 };
 
 interface LnrpcURL {
@@ -33,6 +34,21 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
     } else {
       updateUrl({ value: validatedValue, isValid: true });
     }
+  };
+
+  const connectLightning = () => {
+    props
+      .proposeGatewayLightningService(new URL(url.value))
+      .then(() => {
+        // show success ui
+      })
+      .catch((e: any) => {
+        // show error ui
+        console.error(e);
+      })
+      .finally(() => {
+        updateUrl({ value: "", isValid: false });
+      });
   };
 
   return (
@@ -56,7 +72,7 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
           <Button
             label="Connect 🚀"
             borderRadius="4"
-            onClick={() => console.log("clicked")}
+            onClick={connectLightning}
             height="48px"
             disabled={!url.isValid}
           />
