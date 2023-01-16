@@ -6,6 +6,7 @@ export type InputProps = {
     placeHolder: string;
     value: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    name?: string
 };
 
 export const Input = (input: InputProps) => {
@@ -20,6 +21,7 @@ export const Input = (input: InputProps) => {
                 placeholder={input.placeHolder}
                 height='48px'
                 _placeholder={{ color: '#2d2d2d', opacity: '50%' }}
+                name={input.name}
             />
         </InputGroup>
     );
