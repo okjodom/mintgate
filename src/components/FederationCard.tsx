@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, TabList, TabPanels, Divider, Collapse } from '@chakra-ui/react'
 import { Federation } from '../federation.types';
 import { Button, InfoTabHeader, InfoTab, DepositTab, DepositTabHeader } from '.';
+import { WithdrawTab, WithdrawTabHeader } from './WithdrawTab';
 
 interface FederationProps {
     federation: Federation;
@@ -12,6 +13,7 @@ enum OpenTab {
     Off = -1,
     InfoTab = 0,
     DepositTab = 1,
+    WithdrawTab = 2,
 }
 
 export const FederationCard = (props: FederationProps): JSX.Element => {
@@ -64,12 +66,14 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
                     <TabList gap={2}>
                         <InfoTabHeader />
                         <DepositTabHeader />
+                        <WithdrawTabHeader />
                     </TabList>
                     <Collapse in={showDetails} animateOpacity>
                         <Divider />
                         <TabPanels>
                             <InfoTab {...details} />
                             <DepositTab {...details} />
+                            <WithdrawTab {...details} />
                         </TabPanels>
                     </Collapse>
                 </Tabs>
