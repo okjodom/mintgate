@@ -6,7 +6,7 @@ export type ButtonProps = {
 	color?: string;
 	icon?: any;
 	size?: string;
-	fontSize?: string | number;
+	fontSize?: any;
 	height?: string | number;
 	width?: string | number;
 	borderRadius?: string | number;
