@@ -21,8 +21,8 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 			filter === undefined
 				? data.federations
 				: data.federations.filter(
-						(federation: Federation) => federation.details.active === filter
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
+					(federation: Federation) => federation.details.active === filter
+					// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  );
 		setFedlist(federations);
 	};
@@ -31,45 +31,45 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 		const fedListCopy = [...fedlist];
 
 		switch (sort) {
-			case Sort.Ascending: {
-				const result = fedListCopy.sort((a, b) =>
-					a.details.name < b.details.name
-						? -1
-						: a.details.name > b.details.name
+		case Sort.Ascending: {
+			const result = fedListCopy.sort((a, b) =>
+				a.details.name < b.details.name
+					? -1
+					: a.details.name > b.details.name
 						? 1
 						: 0
-				);
+			);
 
-				return setFedlist(result);
-			}
+			return setFedlist(result);
+		}
 
-			case Sort.Descending: {
-				const result = fedListCopy.sort((a, b) =>
-					a.details.name < b.details.name
-						? 1
-						: a.details.name > b.details.name
+		case Sort.Descending: {
+			const result = fedListCopy.sort((a, b) =>
+				a.details.name < b.details.name
+					? 1
+					: a.details.name > b.details.name
 						? -1
 						: 0
-				);
+			);
 
-				return setFedlist(result);
-			}
+			return setFedlist(result);
+		}
 
-			case Sort.Date: {
-				const result = fedListCopy.sort((a, b) =>
-					a.details.date_created < b.details.date_created
-						? 1
-						: a.details.date_created > b.details.date_created
+		case Sort.Date: {
+			const result = fedListCopy.sort((a, b) =>
+				a.details.date_created < b.details.date_created
+					? 1
+					: a.details.date_created > b.details.date_created
 						? -1
 						: 0
-				);
+			);
 
-				return setFedlist(result);
-			}
+			return setFedlist(result);
+		}
 
-			default: {
-				return setFedlist(data.federations);
-			}
+		default: {
+			return setFedlist(data.federations);
+		}
 		}
 	};
 
@@ -81,7 +81,7 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 	};
 
 	return (
-		<Box m='10'>
+		<Box mt={10} mb={10} mr={[2, 4, 6, 10]} ml={[2, 4, 6, 10]}>
 			<Header
 				data={data.federations}
 				isLnConnected={isLnConnected}
