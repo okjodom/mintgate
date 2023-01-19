@@ -1,5 +1,17 @@
 import { useState } from 'react';
-import { Tabs, TabList, TabPanels, Divider, Collapse } from '@chakra-ui/react';
+import {
+	Tabs,
+	TabList,
+	TabPanels,
+	Divider,
+	Collapse,
+	Text,
+	Circle,
+	Box,
+	HStack,
+	Flex,
+	Stack,
+} from '@chakra-ui/react';
 import { Federation } from '../federation.types';
 import {
 	Button,
@@ -54,23 +66,35 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
 		return name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase();
 	};
 
+	const sliceString = (arg: string): string => {
+		return `${arg.substring(0, 24)}...`;
+	};
+
 	return (
 		<>
-			<main style={cardMainWrapper}>
-				<div style={cardMajorProps}>
-					<div style={cardMajorProps}>
-						<section style={nameWrapper}>
-							<h3 style={nameStyle}>{getFederationName(details.name)}</h3>
-						</section>
-						<section>
-							<p>{details.description}</p>
-							<p>{mint_pubkey}</p>
-						</section>
-					</div>
-					<section>
-						<Button label='details' onClick={detailsControl} />
-					</section>
-				</div>
+			<Stack
+				padding={[4, 4, 6, 6]}
+				borderRadius={4}
+				boxShadow='rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px'
+			>
+				<Flex justifyContent='space-between' alignItems='center'>
+					<HStack>
+						<Circle size='54px' bgColor='black'>
+							<Text color='white'>{getFederationName(details.name)}</Text>
+						</Circle>
+						<Box pl='2'>
+							<Text fontWeight='500'>{details.description}</Text>
+							<Text fontSize={{ base: '13px', md: '15px', lg: '16px' }}>
+								{sliceString(mint_pubkey)}
+							</Text>
+						</Box>
+					</HStack>
+					<Button
+						label='Details'
+						fontSize={{ base: '12px', md: '15px', lg: '16px' }}
+						onClick={detailsControl}
+					/>
+				</Flex>
 				<Tabs index={tab.open} onChange={tabControl} pt={3} variant='unstyled'>
 					<TabList gap={2}>
 						<InfoTabHeader />
@@ -86,33 +110,7 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
 						</TabPanels>
 					</Collapse>
 				</Tabs>
-			</main>
+			</Stack>
 		</>
 	);
-};
-
-const cardMainWrapper = {
-	boxShadow:
-		'rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px',
-	padding: 16,
-	borderRadius: 8,
-};
-
-const cardMajorProps = {
-	display: 'flex',
-	FlexDirection: 'row',
-	justifyContent: 'space-between',
-	alignItems: 'center',
-	gap: 16,
-};
-
-const nameWrapper = {
-	backgroundColor: 'black',
-	padding: 16,
-	borderRadius: '50%',
-};
-
-const nameStyle = {
-	color: 'white',
-	margin: 0,
 };
