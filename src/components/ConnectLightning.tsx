@@ -13,6 +13,8 @@ export const ConnectLightningButton = (props: ConnectLightningButtonProps) => {
 		<Button
 			label={`${props.isLnConnected ? 'Replace' : 'Connect'} Lightning`}
 			onClick={props.onClick}
+			fontSize={{ base: '12px', md: '13px', lg: '16px' }}
+			p={{ base: '10px', md: '13px', lg: '16px' }}
 		/>
 	);
 };

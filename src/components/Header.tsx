@@ -35,6 +35,8 @@ export const Header = React.memo(function Header(
 					label='Connect Federation'
 					onClick={props.toggleShowConnectFed}
 					disabled={!props.isLnConnected}
+					fontSize={{ base: '12px', md: '13px', lg: '16px' }}
+					p={{ base: '10px', md: '13px', lg: '16px' }}
 				/>
 			</Flex>
 			<Spacer />

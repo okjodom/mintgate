@@ -1,35 +1,25 @@
-import { Button as CustomButton } from '@chakra-ui/react';
+import React from 'react';
+import { Button as CustomButton, ResponsiveObject } from '@chakra-ui/react';
 
 export type ButtonProps = {
 	label: string;
 	onClick: () => void;
-	color?: string;
-	icon?: any;
+	icon?: React.ReactSVGElement;
 	size?: string;
-	fontSize?: any;
+	fontSize?: ResponsiveObject<string>;
 	height?: string | number;
 	width?: string | number;
 	borderRadius?: string | number;
 	isLoading?: boolean;
 	disabled?: boolean;
+	children?: React.ReactNode;
+	p?: ResponsiveObject<string>;
 };
 
-export const Button = (button: ButtonProps) => {
+export const Button = (props: ButtonProps) => {
 	return (
-		<CustomButton
-			onClick={button.onClick}
-			backgroundColor='black'
-			color={button.color || 'white'}
-			fontSize={button.fontSize}
-			size={button.size}
-			rightIcon={button.icon}
-			height={button.height}
-			width={button.width}
-			borderRadius={button.borderRadius}
-			isLoading={button.isLoading}
-			disabled={button.disabled}
-		>
-			{button.label}
+		<CustomButton backgroundColor='black' color='white' {...props}>
+			{props.label || props.children}
 		</CustomButton>
 	);
 };
