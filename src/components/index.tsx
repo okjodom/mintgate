@@ -7,3 +7,4 @@ export { ConnectLightning, ConnectLightningButton } from './ConnectLightning';
 export { TabHeader } from './TabHeader';
 export { InfoTab, InfoTabHeader } from './InfoTab';
 export { DepositTab, DepositTabHeader } from './DepositTab';
+export { ApiProvider, ApiContext } from './ApiProvider';
