@@ -1,17 +1,22 @@
-import { ChakraProvider } from '@chakra-ui/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ChakraProvider } from '@chakra-ui/react';
 import { Admin } from './Admin';
+import { MockMintgate } from './api';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import { ApiProvider } from './components';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
+
 root.render(
 	<React.StrictMode>
 		<ChakraProvider>
-			<Admin />
+			<ApiProvider props={{ mintgate: new MockMintgate() }}>
+				<Admin />
+			</ApiProvider>
 		</ChakraProvider>
 	</React.StrictMode>
 );
