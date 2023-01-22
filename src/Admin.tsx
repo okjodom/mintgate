@@ -1,26 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Stack } from '@chakra-ui/react';
 import {
 	Header,
 	FederationCard,
 	ConnectFederation,
 	ConnectLightning,
+	ApiContext,
 } from './components';
+import { GatewayInfo, NullGatewayInfo } from './api';
 import { Federation, Filter, Sort } from './federation.types';
-import { data } from './federation.data';
 
 export const Admin = React.memo(function Admin(): JSX.Element {
-	const [fedlist, setFedlist] = useState<Federation[]>(data.federations);
+	const { mintgate } = React.useContext(ApiContext);
+
+	const [gatewayInfo, setGatewayInfo] = useState<GatewayInfo>(NullGatewayInfo);
+
+	const [fedlist, setFedlist] = useState<Federation[]>([]);
 	const [isLnConnected, updateIsLnConnected] = useState<boolean>(false);
 
 	const [showConnectLn, toggleShowConnectLn] = useState<boolean>(true);
 	const [showConnectFed, toggleShowConnectFed] = useState<boolean>(false);
 
+	useEffect(() => {
+		mintgate.fetchInfo().then((gatewayInfo) => {
+			setGatewayInfo(gatewayInfo);
+			setFedlist(gatewayInfo.federations);
+		});
+	}, [mintgate]);
+
 	const filterFederations = (filter: Filter) => {
 		const federations =
 			filter === undefined
-				? data.federations
-				: data.federations.filter(
+				? gatewayInfo.federations
+				: gatewayInfo.federations.filter(
 					(federation: Federation) => federation.details.active === filter
 					// eslint-disable-next-line no-mixed-spaces-and-tabs
 				  );
@@ -68,7 +80,7 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 		}
 
 		default: {
-			return setFedlist(data.federations);
+			return setFedlist(gatewayInfo.federations);
 		}
 		}
 	};
@@ -83,7 +95,7 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 	return (
 		<Box mt={10} mb={10} mr={[2, 4, 6, 10]} ml={[2, 4, 6, 10]}>
 			<Header
-				data={data.federations}
+				data={gatewayInfo.federations}
 				isLnConnected={isLnConnected}
 				toggleShowConnectLn={() => toggleShowConnectLn(!showConnectLn)}
 				toggleShowConnectFed={() => toggleShowConnectFed(!showConnectFed)}
