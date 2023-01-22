@@ -7,6 +7,12 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { ApiProvider } from './components';
 
+// Read environment variables
+const gateway_api = process.env.REACT_APP_FEDIMINT_GATEWAY_API;
+
+// TODO: Implement and use real Mintgate API calling into gateway_api server
+const mintgate = gateway_api ? new MockMintgate() : new MockMintgate();
+
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
@@ -14,7 +20,7 @@ const root = ReactDOM.createRoot(
 root.render(
 	<React.StrictMode>
 		<ChakraProvider>
-			<ApiProvider props={{ mintgate: new MockMintgate() }}>
+			<ApiProvider props={{ mintgate }}>
 				<Admin />
 			</ApiProvider>
 		</ChakraProvider>
