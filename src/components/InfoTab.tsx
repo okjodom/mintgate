@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabPanel } from '@chakra-ui/react';
+import { Box, Stack, TabPanel, Text } from '@chakra-ui/react';
 import { TabHeader } from '.';
 
 export const InfoTabHeader = (): JSX.Element => {
@@ -17,16 +17,20 @@ export const InfoTab = React.memo(function InfoTab(
 	const { description, date_created } = props;
 	return (
 		<TabPanel>
-			<p>
-				<span>Federation Description: </span>
-				{description}
-			</p>
-			<section>
-				<p>
-					<span>Date Created: </span>
-					{date_created}
-				</p>
-			</section>
+			<Stack spacing={2}>
+				<Box>
+					<Text fontWeight='500' fontSize='15px'>
+						Federation Description:
+					</Text>
+					<Text> {description}</Text>
+				</Box>
+				<Box>
+					<Text fontWeight='500' fontSize='15px'>
+						Date Connected:
+					</Text>
+					<Text>{date_created}</Text>
+				</Box>
+			</Stack>
 		</TabPanel>
 	);
 });
