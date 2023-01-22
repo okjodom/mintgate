@@ -17,11 +17,20 @@ code {
 		display: none;
 	}
 }
+
 @media (max-width: 600px) {
 	.button-menu {
 		display: none;
 	}
 	.icon-menu {
 		display: block;
+	}
+}
+
+@media (max-width: 600px) {
+	.connect-ln {
+		display: flex;
+		flex-direction: column !important;
+		align-items: flex-start !important;
 	}
 }
