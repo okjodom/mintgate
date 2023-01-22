@@ -22,7 +22,7 @@ import {
 } from '.';
 import { WithdrawTab, WithdrawTabHeader } from './WithdrawTab';
 
-interface FederationProps {
+interface FederationCardProps {
 	federation: Federation;
 	onClick: () => void;
 }
@@ -34,7 +34,7 @@ enum OpenTab {
 	WithdrawTab = 2,
 }
 
-export const FederationCard = (props: FederationProps): JSX.Element => {
+export const FederationCard = (props: FederationCardProps): JSX.Element => {
 	const { mint_pubkey, details } = props.federation;
 
 	const [showDetails, setShowDetails] = useState<boolean>(false);
