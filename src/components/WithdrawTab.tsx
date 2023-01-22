@@ -22,7 +22,6 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 		(event: React.ChangeEvent<HTMLInputElement>) => {
 			event.preventDefault();
 			const { value, name } = event.target;
-			console.log(withdrawObject);
 
 			setWithdrawObject((prevState) => ({ ...prevState, [name]: value }));
 		},
@@ -41,7 +40,7 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 
 	return (
 		<TabPanel>
-			<Stack spacing='4' maxWidth='md'>
+			<Stack spacing='4' maxWidth={{ base: '100%', md: 'md', lg: 'md' }}>
 				<Input
 					labelName=' Amount:'
 					placeHolder='Enter amount'
@@ -51,7 +50,7 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 				/>
 				<Input
 					labelName='Your address:'
-					placeHolder='Your wallet address '
+					placeHolder='Enter wallet address '
 					value={withdrawObject.walletAddress}
 					onChange={(e) => handleInputChange(e)}
 					name='walletAddress'
@@ -59,7 +58,7 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 
 				{error && (
 					<Box>
-						<Text color='red' fontSize='14'>
+						<Text textAlign='center' color='red' fontSize='14'>
 							Error: {error}
 						</Text>
 					</Box>
