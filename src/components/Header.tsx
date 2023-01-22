@@ -38,12 +38,13 @@ export const Header = React.memo(function Header(
 					isLnConnected={props.isLnConnected}
 				/>
 				<Button
-					label='Connect Federation'
 					onClick={props.toggleShowConnectFed}
 					disabled={!props.isLnConnected}
 					fontSize={{ base: '12px', md: '13px', lg: '16px' }}
 					p={{ base: '10px', md: '13px', lg: '16px' }}
-				/>
+				>
+					Connect Federeation
+				</Button>
 			</Flex>
 			<Spacer />
 			<div className='button-menu'>

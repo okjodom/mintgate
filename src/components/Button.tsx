@@ -2,7 +2,6 @@ import React from 'react';
 import { Button as CustomButton, ResponsiveObject } from '@chakra-ui/react';
 
 export type ButtonProps = {
-	label: string;
 	onClick: () => void;
 	icon?: React.ReactSVGElement;
 	size?: string;
@@ -19,7 +18,7 @@ export type ButtonProps = {
 export const Button = (props: ButtonProps) => {
 	return (
 		<CustomButton backgroundColor='black' color='white' {...props}>
-			{props.label || props.children}
+			{props.children}
 		</CustomButton>
 	);
 };

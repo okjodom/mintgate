@@ -11,11 +11,10 @@ export type ConnectLightningButtonProps = {
 export const ConnectLightningButton = (props: ConnectLightningButtonProps) => {
 	return (
 		<Button
-			label={`${props.isLnConnected ? 'Replace' : 'Connect'} Lightning`}
 			onClick={props.onClick}
 			fontSize={{ base: '12px', md: '13px', lg: '16px' }}
 			p={{ base: '10px', md: '13px', lg: '16px' }}
-		/>
+		>{`${props.isLnConnected ? 'Replace' : 'Connect'} Lightning`}</Button>
 	);
 };
 
@@ -81,12 +80,13 @@ export const ConnectLightning = (props: ConnectLightningProps) => {
 						onChange={(event) => handleInputString(event)}
 					/>
 					<Button
-						label='Connect 🚀'
 						borderRadius='4'
 						onClick={connectLightning}
 						height='48px'
 						disabled={!url.isValid}
-					/>
+					>
+						Connect 🚀
+					</Button>
 				</HStack>
 			</Box>
 		</Collapse>

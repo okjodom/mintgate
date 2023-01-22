@@ -65,7 +65,9 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 					</Box>
 				)}
 
-				<Button label='Withdraw' borderRadius='4' onClick={createWithdrawal} />
+				<Button borderRadius='4' onClick={createWithdrawal}>
+					Withdraw
+				</Button>
 			</Stack>
 		</TabPanel>
 	);

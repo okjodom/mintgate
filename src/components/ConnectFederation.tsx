@@ -35,12 +35,13 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 						onChange={(event) => handleInputString(event)}
 					/>
 					<Button
-						label='Connect 🚀'
 						borderRadius='4'
 						onClick={() => console.log('clicked')}
 						height='48px'
 						disabled={true}
-					/>
+					>
+						Connect 🚀
+					</Button>
 				</HStack>
 			</Box>
 		</Collapse>

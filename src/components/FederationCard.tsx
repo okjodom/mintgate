@@ -90,10 +90,11 @@ export const FederationCard = (props: FederationProps): JSX.Element => {
 						</Box>
 					</HStack>
 					<Button
-						label='Details'
 						fontSize={{ base: '12px', md: '15px', lg: '16px' }}
 						onClick={detailsControl}
-					/>
+					>
+						Details
+					</Button>
 				</Flex>
 				<Tabs index={tab.open} onChange={tabControl} pt={3} variant='unstyled'>
 					<TabList gap={2}>

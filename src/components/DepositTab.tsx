@@ -42,77 +42,77 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 
 	const getDepositCardProps = (): DepositCardProps => {
 		switch (depositStatus) {
-			case DepositStatus.Address:
-				return {
-					content: <ShowDepositAddress address={mock_address} />,
-					actions: [
-						{
-							label: 'Share Address',
-							onClick: () => setDepositStatus(DepositStatus.Pending),
-						},
-						{
-							label: 'Copy Address',
-							onClick: () => setDepositStatus(DepositStatus.Pending),
-						},
-					],
-					infographic: {
-						qrStr: mock_address,
+		case DepositStatus.Address:
+			return {
+				content: <ShowDepositAddress address={mock_address} />,
+				actions: [
+					{
+						label: 'Share Address',
+						onClick: () => setDepositStatus(DepositStatus.Pending),
 					},
-				};
-			case DepositStatus.Pending:
-				return {
-					content: (
-						<ShowTransaction
-							{...{
-								txid: mock_txid,
-								address: mock_address,
-								amount_btc: 0.00013813,
-								confirmations: 1,
-								confirmationsRequired: 3,
-							}}
-						/>
-					),
-					actions: [
-						{
-							label: 'Copy Transaction ID',
-							onClick: () => setDepositStatus(DepositStatus.Complete),
-						},
-						{
-							label: 'Complete',
-							onClick: () => setDepositStatus(DepositStatus.Complete),
-						},
-					],
-					infographic: {
-						imgUrl:
+					{
+						label: 'Copy Address',
+						onClick: () => setDepositStatus(DepositStatus.Pending),
+					},
+				],
+				infographic: {
+					qrStr: mock_address,
+				},
+			};
+		case DepositStatus.Pending:
+			return {
+				content: (
+					<ShowTransaction
+						{...{
+							txid: mock_txid,
+							address: mock_address,
+							amount_btc: 0.00013813,
+							confirmations: 1,
+							confirmationsRequired: 3,
+						}}
+					/>
+				),
+				actions: [
+					{
+						label: 'Copy Transaction ID',
+						onClick: () => setDepositStatus(DepositStatus.Complete),
+					},
+					{
+						label: 'Complete',
+						onClick: () => setDepositStatus(DepositStatus.Complete),
+					},
+				],
+				infographic: {
+					imgUrl:
 							'https://www.maxpixel.net/static/photo/1x/Bitcoin-Logo-Bitcoin-Icon-Bitcoin-Btc-Icon-Currency-6219384.png',
-						altText: 'Pending bitcoin transaction',
+					altText: 'Pending bitcoin transaction',
+				},
+			};
+		case DepositStatus.Complete:
+			return {
+				content: (
+					<ShowTransaction
+						{...{
+							txid: mock_txid,
+							address: mock_address,
+							amount_btc: 0.00013813,
+							confirmations: 3,
+							confirmationsRequired: 3,
+						}}
+					/>
+				),
+				actions: [
+					{
+						label: 'Close',
+						onClick: () => setDepositStatus(DepositStatus.Address),
 					},
-				};
-			case DepositStatus.Complete:
-				return {
-					content: (
-						<ShowTransaction
-							{...{
-								txid: mock_txid,
-								address: mock_address,
-								amount_btc: 0.00013813,
-								confirmations: 3,
-								confirmationsRequired: 3,
-							}}
-						/>
-					),
-					actions: [
-						{
-							label: 'Close',
-							onClick: () => setDepositStatus(DepositStatus.Address),
-						},
-					],
-					infographic: {
-						imgUrl:
+				],
+				infographic: {
+					imgUrl:
 							'https://iconarchive.com/download/i104526/cjdowner/cryptocurrency/Bitcoin.ico',
-						altText: 'Bitcoin Address QR Code',
-					},
-				};
+					altText: 'Bitcoin Address QR Code',
+				},
+			};
 		}
 	};
 
@@ -166,7 +166,9 @@ export const DepositCard = React.memo(function DepositCard(
 				<CardFooter gap='2'>
 					{actions?.map((action: DepositCardAction, i: number) => {
 						return (
-							<Button label={action.label} onClick={action.onClick} key={i} />
+							<Button onClick={action.onClick} key={i}>
+								{action.label}
+							</Button>
 						);
 					})}
 				</CardFooter>
