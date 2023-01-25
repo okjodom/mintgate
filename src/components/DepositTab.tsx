@@ -28,6 +28,13 @@ enum DepositStatus {
 	Complete,
 }
 
+const sliceString = (arg: string): string => {
+	return `${arg.substring(0, 15)}......${arg.substring(
+		arg.length,
+		arg.length - 15
+	)}`;
+};
+
 // TODO: Make API call to get new deposit address
 const getNewDepositAddress = (): string => {
 	return 'bc1qgf60crqtlxn7279tgh8lsxzagmu97cyuwtykxwv026s9hwg427fsjvw7uz';
@@ -118,7 +125,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 	};
 
 	return (
-		<TabPanel>
+		<TabPanel pl='8px' pr='8px'>
 			<DepositCard {...getDepositCardProps()} />
 		</TabPanel>
 	);
@@ -172,7 +179,7 @@ export const DepositCard = React.memo(function DepositCard(
 						) : (
 							<Image
 								objectFit='cover'
-								maxW={{ base: '100%', sm: '200px' }}
+								maxW={{ base: '200px', sm: '200px' }}
 								src={infographic.imgUrl}
 								alt={infographic.altText}
 							/>
@@ -209,13 +216,6 @@ interface ShowDepositAddressProps {
 const ShowDepositAddress = ({
 	address,
 }: ShowDepositAddressProps): JSX.Element => {
-	const sliceString = (arg: string): string => {
-		return `${arg.substring(0, 15)}......${arg.substring(
-			arg.length,
-			arg.length - 15
-		)}`;
-	};
-
 	return (
 		<>
 			<Heading
@@ -256,7 +256,13 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 
 	return (
 		<>
-			<Heading size='md'>Bitcoin Deposit</Heading>
+			<Heading
+				fontWeight='500'
+				fontSize={{ base: '22', md: '24' }}
+				color='#1A202C'
+			>
+				Bitcoin Deposit
+			</Heading>
 			<Flex align='center' mt={3}>
 				<Text fontSize='lg' mr={2}>
 					Amount:
@@ -266,7 +272,7 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 				</Text>
 			</Flex>
 			<Flex alignItems='center' gap={1}>
-				<Text mt={4}>
+				<Text mb='2' mt={4}>
 					Confirmations: {confirmations} / {confirmationsRequired} required
 				</Text>
 				<Spacer />
@@ -281,11 +287,16 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 				)}
 			</Flex>
 			<Progress value={progress} size='xs' colorScheme='orange' hasStripe />
-			<Text mt={2}>Sent to address: {address}</Text>
+			<Text color='#1A202C' fontWeight='500' mt={4}>
+				Sent to address:
+			</Text>
+			<Text> {sliceString(address)}</Text>
 			<Text mt={2}>
-				Transaction ID:{' '}
+				<Text color='#1A202C' fontWeight='500' mt={2}>
+					Transaction ID:
+				</Text>
 				<Link href={`https://mempool.space/tx/${txid}`} target='_blank'>
-					{txid}
+					{sliceString(txid)}
 				</Link>
 			</Text>
 		</>
