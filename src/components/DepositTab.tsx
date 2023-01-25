@@ -13,6 +13,7 @@ import {
 	Link,
 	Progress,
 	Badge,
+	Box,
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Button, TabHeader } from '.';
@@ -155,39 +156,48 @@ export const DepositCard = React.memo(function DepositCard(
 	const { content, actions, infographic } = props;
 
 	return (
-		<Card
-			direction={{ base: 'column', sm: 'row' }}
-			overflow='hidden'
-			variant='unstyled'
-		>
-			<Stack>
+		<Card overflow='hidden' variant='unstyled'>
+			<Stack alignItems='center' flexDir={{ base: 'column', md: 'row' }}>
 				<CardBody>{content}</CardBody>
-
-				<CardFooter gap='2'>
-					{actions?.map((action: DepositCardAction, i: number) => {
-						return (
-							<Button onClick={action.onClick} key={i}>
-								{action.label}
-							</Button>
-						);
-					})}
-				</CardFooter>
+				{infographic && (
+					<>
+						{isQrCodeRenderer(infographic) ? (
+							<Box width='250px' height='100%'>
+								<QRCodeSVG
+									height='100%'
+									width='100%'
+									value={infographic.qrStr}
+								/>
+							</Box>
+						) : (
+							<Image
+								objectFit='cover'
+								maxW={{ base: '100%', sm: '200px' }}
+								src={infographic.imgUrl}
+								alt={infographic.altText}
+							/>
+						)}
+					</>
+				)}
 			</Stack>
-			{infographic && (
-				<>
-					<Spacer />
-					{isQrCodeRenderer(infographic) ? (
-						<QRCodeSVG value={infographic.qrStr} />
-					) : (
-						<Image
-							objectFit='cover'
-							maxW={{ base: '100%', sm: '200px' }}
-							src={infographic.imgUrl}
-							alt={infographic.altText}
-						/>
-					)}
-				</>
-			)}
+			<CardFooter
+				justifyContent={{ base: 'space-between', md: 'normal' }}
+				pt={{ base: 6, md: 2, lg: 2 }}
+				gap='6'
+			>
+				{actions?.map((action: DepositCardAction, i: number) => {
+					return (
+						<Button
+							fontSize={{ base: '12px', md: '13px', lg: '16px' }}
+							onClick={action.onClick}
+							key={i}
+							width={{ base: '100%', md: 'fit-content' }}
+						>
+							{action.label}
+						</Button>
+					);
+				})}
+			</CardFooter>
 		</Card>
 	);
 });
@@ -199,20 +209,33 @@ interface ShowDepositAddressProps {
 const ShowDepositAddress = ({
 	address,
 }: ShowDepositAddressProps): JSX.Element => {
+	const sliceString = (arg: string): string => {
+		return `${arg.substring(0, 15)}......${arg.substring(
+			arg.length,
+			arg.length - 15
+		)}`;
+	};
+
 	return (
 		<>
-			<Heading size='md'>Bitcoin Deposit to Federation</Heading>
+			<Heading
+				fontWeight='500'
+				fontSize={{ base: '22', md: '24' }}
+				color='#1A202C'
+			>
+				Bitcoin Deposit to Federation
+			</Heading>
 
 			<Text py='3'>
 				Please pay to the address address shown <br /> to deposit funds into
 				this federation <br /> You can scan the QR code to pay.
 			</Text>
 			<Text py='1'></Text>
-			<Flex align='center' mb={4}>
-				<Text fontSize='lg' fontWeight='bold' mr={2}>
+			<Flex flexDir='column' mb={4}>
+				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Address:
 				</Text>
-				<Text fontSize='lg'>{address}</Text>
+				<Text fontSize='lg'>{sliceString(address)}</Text>
 			</Flex>
 		</>
 	);
