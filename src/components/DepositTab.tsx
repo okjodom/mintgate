@@ -28,7 +28,7 @@ enum DepositStatus {
 	Complete,
 }
 
-const sliceString = (arg: string): string => {
+const truncateStringFormat = (arg: string): string => {
 	return `${arg.substring(0, 15)}......${arg.substring(
 		arg.length,
 		arg.length - 15
@@ -226,16 +226,16 @@ const ShowDepositAddress = ({
 				Bitcoin Deposit to Federation
 			</Heading>
 
-			<Text py='3'>
-				Please pay to the address address shown <br /> to deposit funds into
-				this federation <br /> You can scan the QR code to pay.
+			<Text maxW='sm' py='3'>
+				Please pay to the address address shown to deposit funds into this
+				federation You can scan the QR code to pay.
 			</Text>
 			<Text py='1'></Text>
 			<Flex flexDir='column' mb={4}>
 				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Address:
 				</Text>
-				<Text fontSize='lg'>{sliceString(address)}</Text>
+				<Text fontSize='lg'>{truncateStringFormat(address)}</Text>
 			</Flex>
 		</>
 	);
@@ -290,13 +290,13 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 			<Text color='#1A202C' fontWeight='500' mt={4}>
 				Sent to address:
 			</Text>
-			<Text> {sliceString(address)}</Text>
+			<Text> {truncateStringFormat(address)}</Text>
 			<Text mt={2}>
 				<Text color='#1A202C' fontWeight='500' mt={2}>
 					Transaction ID:
 				</Text>
 				<Link href={`https://mempool.space/tx/${txid}`} target='_blank'>
-					{sliceString(txid)}
+					{truncateStringFormat(txid)}
 				</Link>
 			</Text>
 		</>
