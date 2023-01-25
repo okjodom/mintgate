@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	TabPanel,
 	Stack,
@@ -15,7 +15,7 @@ import {
 	Box,
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Button, TabHeader } from '.';
+import { ApiContext, Button, TabHeader } from '.';
 
 export const DepositTabHeader = (): JSX.Element => {
 	return <TabHeader>Deposit</TabHeader>;
@@ -34,16 +34,19 @@ const truncateStringFormat = (arg: string): string => {
 	)}`;
 };
 
-// TODO: Make API call to get new deposit address
-const getNewDepositAddress = (): string => {
-	return 'bc1qgf60crqtlxn7279tgh8lsxzagmu97cyuwtykxwv026s9hwg427fsjvw7uz';
-};
-
 export const DepositTab = React.memo(function DepositTab(): JSX.Element {
+	const { mintgate } = React.useContext(ApiContext);
 	const [depositStatus, setDepositStatus] = useState<DepositStatus>(
 		DepositStatus.Address
 	);
-	const mock_address = getNewDepositAddress();
+	const [address, setAddress] = useState<string>('');
+
+	useEffect(() => {
+		mintgate.fetchAddress().then((newAddress) => {
+			setAddress(newAddress);
+		});
+	}, [mintgate]);
+
 	const mock_txid =
 		'de3d5bf1e3c1b3be2a1e025825f751629390ad60c8f91723e330f2356d99c59b';
 
@@ -51,7 +54,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 		switch (depositStatus) {
 		case DepositStatus.Address:
 			return {
-				content: <ShowDepositAddress address={mock_address} />,
+				content: <ShowDepositAddress address={address} />,
 				actions: [
 					{
 						label: 'Share Address',
@@ -63,7 +66,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 					},
 				],
 				infographic: {
-					qrStr: mock_address,
+					qrStr: address,
 				},
 			};
 		case DepositStatus.Pending:
@@ -71,8 +74,8 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 				content: (
 					<ShowTransaction
 						{...{
+							address,
 							txid: mock_txid,
-							address: mock_address,
 							amount_btc: 0.00013813,
 							confirmations: 1,
 							confirmationsRequired: 3,
@@ -102,8 +105,8 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 				content: (
 					<ShowTransaction
 						{...{
+							address,
 							txid: mock_txid,
-							address: mock_address,
 							amount_btc: 0.00013813,
 							confirmations: 3,
 							confirmationsRequired: 3,
