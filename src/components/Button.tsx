@@ -7,7 +7,7 @@ export type ButtonProps = {
 	size?: string;
 	fontSize?: ResponsiveObject<string>;
 	height?: string | number;
-	width?: string | number;
+	width?: ResponsiveObject<string>;
 	borderRadius?: string | number;
 	isLoading?: boolean;
 	disabled?: boolean;
