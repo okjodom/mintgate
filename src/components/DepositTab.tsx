@@ -82,7 +82,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 				),
 				actions: [
 					{
-						label: 'Copy Transaction ID',
+						label: 'View Transaction',
 						onClick: () => setDepositStatus(DepositStatus.Complete),
 					},
 					{
@@ -231,7 +231,11 @@ const ShowDepositAddress = ({
 				federation You can scan the QR code to pay.
 			</Text>
 			<Text py='1'></Text>
-			<Flex flexDir='column' mb={4}>
+			<Flex
+				flexDir={{ base: 'column', md: 'row' }}
+				alignItems={{ base: 'left', md: 'center' }}
+				mb={4}
+			>
 				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Address:
 				</Text>
@@ -272,33 +276,58 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 				</Text>
 			</Flex>
 			<Flex alignItems='center' gap={1}>
-				<Text mb='2' mt={4}>
-					Confirmations: {confirmations} / {confirmationsRequired} required
-				</Text>
+				<Flex
+					flexDir={{ base: 'column', md: 'row' }}
+					alignItems={{ base: 'left', md: 'center' }}
+					mt={4}
+				>
+					<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
+						Confirmations:
+					</Text>
+					<Text>
+						{confirmations} / {confirmationsRequired} required
+					</Text>
+				</Flex>
 				<Spacer />
 				{progress < 100 ? (
-					<Badge colorScheme='red' variant='outline'>
+					<Badge colorScheme='red' variant='outline' mb={-4}>
 						Pending
 					</Badge>
 				) : (
-					<Badge colorScheme='orange' variant='outline'>
+					<Badge colorScheme='orange' variant='outline' mb={-4}>
 						Complete
 					</Badge>
 				)}
 			</Flex>
-			<Progress value={progress} size='xs' colorScheme='orange' hasStripe />
-			<Text color='#1A202C' fontWeight='500' mt={4}>
-				Sent to address:
-			</Text>
-			<Text> {truncateStringFormat(address)}</Text>
-			<Text mt={2}>
-				<Text color='#1A202C' fontWeight='500' mt={2}>
+			<Progress
+				value={progress}
+				size='xs'
+				colorScheme='orange'
+				hasStripe
+				mb={2}
+			/>
+			<Flex
+				flexDir={{ base: 'column', md: 'row' }}
+				alignItems={{ base: 'left', md: 'center' }}
+				mb={4}
+			>
+				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
+					Receiving Addr:
+				</Text>
+				<Text> {truncateStringFormat(address)}</Text>
+			</Flex>
+			<Flex
+				flexDir={{ base: 'column', md: 'row' }}
+				alignItems={{ base: 'left', md: 'center' }}
+				mb={4}
+			>
+				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Transaction ID:
 				</Text>
 				<Link href={`https://mempool.space/tx/${txid}`} target='_blank'>
 					{truncateStringFormat(txid)}
 				</Link>
-			</Text>
+			</Flex>
 		</>
 	);
 };
