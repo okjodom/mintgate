@@ -1,8 +1,8 @@
-import { Mintgate } from './Mintgate';
+import { GatewayInfo, Mintgate } from './Mintgate';
 
 // MockMintgate is a mock implementation of the Mintgate API
 export class MockMintgate implements Mintgate {
-	fetchInfo = async () => {
+	fetchInfo = async (): Promise<GatewayInfo> => {
 		return {
 			federations: [
 				{
@@ -46,5 +46,10 @@ export class MockMintgate implements Mintgate {
 			],
 			version_hash: 'f876d12a78df7d4ef5b3a4913590ded6bfe5c3b1',
 		};
+	};
+
+	fetchAddress = async (): Promise<string> => {
+		// Use IP's bitcoin address as a mock
+		return 'bc1qgf60crqtlxn7279tgh8lsxzagmu97cyuwtykxwv026s9hwg427fsjvw7uz';
 	};
 }
