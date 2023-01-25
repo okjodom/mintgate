@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Stack } from '@chakra-ui/react';
+import { Box, Center, Stack } from '@chakra-ui/react';
 import {
 	Header,
 	FederationCard,
@@ -93,32 +93,41 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 	};
 
 	return (
-		<Box mt={10} mb={10} mr={[2, 4, 6, 10]} ml={[2, 4, 6, 10]}>
-			<Header
-				data={gatewayInfo.federations}
-				isLnConnected={isLnConnected}
-				toggleShowConnectLn={() => toggleShowConnectLn(!showConnectLn)}
-				toggleShowConnectFed={() => toggleShowConnectFed(!showConnectFed)}
-				filterCallback={filterFederations}
-				sortCallback={sortFederations}
-			/>
-			<ConnectLightning
-				isOpen={showConnectLn}
-				isLnConnected={isLnConnected}
-				proposeGatewayLightningService={proposeGatewayLightningService}
-			/>
-			<ConnectFederation isOpen={showConnectFed} />
-			<Stack spacing={6} pt={6}>
-				{fedlist.map((federation: Federation) => {
-					return (
-						<FederationCard
-							key={federation.mint_pubkey}
-							federation={federation}
-							onClick={() => console.log('clicked')}
-						/>
-					);
-				})}
-			</Stack>
-		</Box>
+		<Center>
+			<Box
+				maxW='1000px'
+				width='100%'
+				mt={10}
+				mb={10}
+				mr={[2, 4, 6, 10]}
+				ml={[2, 4, 6, 10]}
+			>
+				<Header
+					data={gatewayInfo.federations}
+					isLnConnected={isLnConnected}
+					toggleShowConnectLn={() => toggleShowConnectLn(!showConnectLn)}
+					toggleShowConnectFed={() => toggleShowConnectFed(!showConnectFed)}
+					filterCallback={filterFederations}
+					sortCallback={sortFederations}
+				/>
+				<ConnectLightning
+					isOpen={showConnectLn}
+					isLnConnected={isLnConnected}
+					proposeGatewayLightningService={proposeGatewayLightningService}
+				/>
+				<ConnectFederation isOpen={showConnectFed} />
+				<Stack spacing={6} pt={6}>
+					{fedlist.map((federation: Federation) => {
+						return (
+							<FederationCard
+								key={federation.mint_pubkey}
+								federation={federation}
+								onClick={() => console.log('clicked')}
+							/>
+						);
+					})}
+				</Stack>
+			</Box>
+		</Center>
 	);
 });
