@@ -10,7 +10,6 @@ import {
 	Text,
 	Spacer,
 	Flex,
-	Link,
 	Progress,
 	Badge,
 	Box,
@@ -83,9 +82,11 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 				actions: [
 					{
 						label: 'View Transaction',
-						onClick: () => setDepositStatus(DepositStatus.Complete),
+						onClick: () =>
+							window.open(`https://mempool.space/tx/${mock_txid}`, '_blank'),
 					},
 					{
+						// TODO: Remove this simulation button
 						label: 'Complete',
 						onClick: () => setDepositStatus(DepositStatus.Complete),
 					},
@@ -324,9 +325,7 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Transaction ID:
 				</Text>
-				<Link href={`https://mempool.space/tx/${txid}`} target='_blank'>
-					{truncateStringFormat(txid)}
-				</Link>
+				<Text> {truncateStringFormat(txid)}</Text>
 			</Flex>
 		</>
 	);
