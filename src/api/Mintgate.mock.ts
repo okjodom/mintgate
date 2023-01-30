@@ -1,3 +1,4 @@
+import { Federation } from '../federation.types';
 import { GatewayInfo, Mintgate } from './Mintgate';
 
 // MockMintgate is a mock implementation of the Mintgate API
@@ -51,5 +52,25 @@ export class MockMintgate implements Mintgate {
 	fetchAddress = async (): Promise<string> => {
 		// Use IP's bitcoin address as a mock
 		return 'bc1qgf60crqtlxn7279tgh8lsxzagmu97cyuwtykxwv026s9hwg427fsjvw7uz';
+	};
+
+	connectFederation = async (_connectInfo: string): Promise<Federation> => {
+		// TODO: autogenerate mock names
+		const federation_id = 'mock_federation';
+		// TODO: autogenerate mock pubkeys
+		const mint_pubkey =
+			'4222d0e6f9f4e0a9d471c81b3ee454032cddc8590a9aebf43332bb2d3ecb976c';
+
+		return Promise.resolve({
+			federation_id,
+			mint_pubkey,
+			details: {
+				description: 'Newly connected federation mock',
+				date_created: Date.now().toString(),
+				name: 'mock_federation',
+				url: '',
+				active: true,
+			},
+		});
 	};
 }
