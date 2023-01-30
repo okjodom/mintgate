@@ -4,6 +4,7 @@ import { Federation } from '../federation.types';
 export interface Mintgate {
 	fetchInfo: () => Promise<GatewayInfo>;
 	fetchAddress: () => Promise<string>;
+	connectFederation: (connectInfo: string) => Promise<Federation>;
 }
 
 // GatewayInfo is the information returned by the Gateway server
