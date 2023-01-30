@@ -23,8 +23,13 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 	};
 
 	const handleConnectFederation = async () => {
-		const federation = await mintgate.connectFederation(connectInfo);
-		connect.renderConnectedFedCallback(federation);
+		try {
+			const federation = await mintgate.connectFederation(connectInfo);
+			connect.renderConnectedFedCallback(federation);
+			// TODO: Show success UI
+		} catch (e: any) {
+			// TODO: Show error UI
+		}
 	};
 
 	return (
