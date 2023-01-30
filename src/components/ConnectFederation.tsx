@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { Box, Collapse, HStack } from '@chakra-ui/react';
+import { Federation } from '../federation.types';
+import { ApiContext } from './ApiProvider';
 import { Button } from './Button';
 import { Input } from './Input';
 
 export type ConnectFederationProps = {
 	isOpen: boolean;
+	renderConnectedFedCallback: (federation: Federation) => void;
 };
 
 export const ConnectFederation = (connect: ConnectFederationProps) => {
+	const { mintgate } = React.useContext(ApiContext);
+
 	const [inputString, setInputString] = useState<string>('');
 
 	const handleInputString = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		const { value } = event.target;
 		setInputString(value);
+	};
+
+	const handleConnectFederation = async () => {
+		const federation = await mintgate.connectFederation(inputString);
+		connect.renderConnectedFedCallback(federation);
 	};
 
 	return (
@@ -36,9 +46,8 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 					/>
 					<Button
 						borderRadius='4'
-						onClick={() => console.log('clicked')}
+						onClick={() => handleConnectFederation()}
 						height='48px'
-						disabled={true}
 					>
 						Connect 🚀
 					</Button>
