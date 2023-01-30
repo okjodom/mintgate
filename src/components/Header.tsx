@@ -15,13 +15,11 @@ import { Button as ChakraButton } from '@chakra-ui/react';
 import { FiChevronDown } from 'react-icons/fi';
 import { HiMenuAlt3 } from 'react-icons/hi';
 import { Federation, Filter, Sort } from '../federation.types';
-import { Button, ConnectLightningButton } from '.';
+import { Button } from '.';
 import '../index.css';
 
 export type HeaderProps = {
 	data: Federation[];
-	isLnConnected: boolean;
-	toggleShowConnectLn: () => void;
 	toggleShowConnectFed: () => void;
 	filterCallback: (filter: Filter) => void;
 	sortCallback: (sort: Sort) => void;
@@ -33,13 +31,8 @@ export const Header = React.memo(function Header(
 	return (
 		<Flex>
 			<Flex alignItems='center' gap={2}>
-				<ConnectLightningButton
-					onClick={props.toggleShowConnectLn}
-					isLnConnected={props.isLnConnected}
-				/>
 				<Button
 					onClick={props.toggleShowConnectFed}
-					disabled={!props.isLnConnected}
 					fontSize={{ base: '12px', md: '13px', lg: '16px' }}
 					p={{ base: '10px', md: '13px', lg: '16px' }}
 				>

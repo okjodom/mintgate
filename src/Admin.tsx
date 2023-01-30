@@ -4,7 +4,6 @@ import {
 	Header,
 	FederationCard,
 	ConnectFederation,
-	ConnectLightning,
 	ApiContext,
 } from './components';
 import { GatewayInfo, NullGatewayInfo } from './api';
@@ -16,9 +15,7 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 	const [gatewayInfo, setGatewayInfo] = useState<GatewayInfo>(NullGatewayInfo);
 
 	const [fedlist, setFedlist] = useState<Federation[]>([]);
-	const [isLnConnected, updateIsLnConnected] = useState<boolean>(false);
 
-	const [showConnectLn, toggleShowConnectLn] = useState<boolean>(true);
 	const [showConnectFed, toggleShowConnectFed] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -85,13 +82,6 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 		}
 	};
 
-	// TODO: Make real api call to connect gateway to proposed lightning rpc service
-	const proposeGatewayLightningService = async (url: URL) => {
-		console.log(url);
-		updateIsLnConnected(true);
-		toggleShowConnectLn(false);
-	};
-
 	const renderConnectedFedCallback = (federation: Federation) => {
 		setFedlist([federation, ...fedlist]);
 	};
@@ -108,16 +98,9 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 			>
 				<Header
 					data={gatewayInfo.federations}
-					isLnConnected={isLnConnected}
-					toggleShowConnectLn={() => toggleShowConnectLn(!showConnectLn)}
 					toggleShowConnectFed={() => toggleShowConnectFed(!showConnectFed)}
 					filterCallback={filterFederations}
 					sortCallback={sortFederations}
-				/>
-				<ConnectLightning
-					isOpen={showConnectLn}
-					isLnConnected={isLnConnected}
-					proposeGatewayLightningService={proposeGatewayLightningService}
 				/>
 				<ConnectFederation
 					isOpen={showConnectFed}
