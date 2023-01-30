@@ -18,6 +18,7 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 	const handleInputString = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		const { value } = event.target;
+		// TODO: Issue #30: Validate federation connect info string proposed via UI
 		setConnectInfo(value);
 	};
 
