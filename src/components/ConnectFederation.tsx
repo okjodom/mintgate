@@ -13,16 +13,16 @@ export type ConnectFederationProps = {
 export const ConnectFederation = (connect: ConnectFederationProps) => {
 	const { mintgate } = React.useContext(ApiContext);
 
-	const [inputString, setInputString] = useState<string>('');
+	const [connectInfo, setConnectInfo] = useState<string>('');
 
 	const handleInputString = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		const { value } = event.target;
-		setInputString(value);
+		setConnectInfo(value);
 	};
 
 	const handleConnectFederation = async () => {
-		const federation = await mintgate.connectFederation(inputString);
+		const federation = await mintgate.connectFederation(connectInfo);
 		connect.renderConnectedFedCallback(federation);
 	};
 
@@ -41,7 +41,7 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 					<Input
 						labelName='Connect String:'
 						placeHolder='Enter federation connection string'
-						value={inputString}
+						value={connectInfo}
 						onChange={(event) => handleInputString(event)}
 					/>
 					<Button
