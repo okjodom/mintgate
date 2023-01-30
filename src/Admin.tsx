@@ -92,6 +92,10 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 		toggleShowConnectLn(false);
 	};
 
+	const renderConnectedFedCallback = (federation: Federation) => {
+		setFedlist([federation, ...fedlist]);
+	};
+
 	return (
 		<Center>
 			<Box
@@ -115,7 +119,10 @@ export const Admin = React.memo(function Admin(): JSX.Element {
 					isLnConnected={isLnConnected}
 					proposeGatewayLightningService={proposeGatewayLightningService}
 				/>
-				<ConnectFederation isOpen={showConnectFed} />
+				<ConnectFederation
+					isOpen={showConnectFed}
+					renderConnectedFedCallback={renderConnectedFedCallback}
+				/>
 				<Stack spacing={6} pt={6}>
 					{fedlist.map((federation: Federation) => {
 						return (
