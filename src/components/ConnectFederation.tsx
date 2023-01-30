@@ -10,21 +10,56 @@ export type ConnectFederationProps = {
 	renderConnectedFedCallback: (federation: Federation) => void;
 };
 
+interface FedConnectInfo {
+	value: string;
+	isValid: boolean;
+}
+
 export const ConnectFederation = (connect: ConnectFederationProps) => {
 	const { mintgate } = React.useContext(ApiContext);
 
-	const [connectInfo, setConnectInfo] = useState<string>('');
+	const [connectInfo, setConnectInfo] = useState<FedConnectInfo>({
+		value: '',
+		isValid: false,
+	});
 
 	const handleInputString = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		const { value } = event.target;
-		// TODO: Issue #30: Validate federation connect info string proposed via UI
-		setConnectInfo(value);
+
+		try {
+			let parsed = JSON.parse(value);
+
+			if (typeof parsed === 'string') {
+				// Bug: why would we need a second pass at parsing json string?
+				parsed = JSON.parse(parsed);
+			}
+
+			const isValid =
+				Object.prototype.hasOwnProperty.call(parsed, 'members') &&
+				parsed['members'].length > 0 &&
+				parsed['members'].every((member: [number, string]) => {
+					return (
+						member.length === 2 &&
+						typeof member[0] === 'number' &&
+						typeof member[1] === 'string'
+						// TODO: validate member[1] is a valid web socket?
+					);
+				});
+
+			setConnectInfo({ value, isValid });
+			// TODO: Show progress UI
+		} catch {
+			setConnectInfo({ value, isValid: false });
+			// TODO: Show error UI
+		}
 	};
 
 	const handleConnectFederation = async () => {
+		if (!connectInfo.isValid) return;
+
 		try {
-			const federation = await mintgate.connectFederation(connectInfo);
+			const federation = await mintgate.connectFederation(connectInfo.value);
 			connect.renderConnectedFedCallback(federation);
 			// TODO: Show success UI
 		} catch (e: any) {
@@ -47,13 +82,14 @@ export const ConnectFederation = (connect: ConnectFederationProps) => {
 					<Input
 						labelName='Connect String:'
 						placeHolder='Enter federation connection string'
-						value={connectInfo}
+						value={connectInfo.value}
 						onChange={(event) => handleInputString(event)}
 					/>
 					<Button
 						borderRadius='4'
 						onClick={() => handleConnectFederation()}
 						height='48px'
+						disabled={!connectInfo.isValid}
 					>
 						Connect 🚀
 					</Button>
