@@ -50,6 +50,20 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 	const mock_txid =
 		'de3d5bf1e3c1b3be2a1e025825f751629390ad60c8f91723e330f2356d99c59b';
 
+	const handleCompleteTransaction = async () => {
+		// TODO: Call to completeDeposit should be automated.
+		// once all the required data is available, complete the deposit without requiring user interaction.
+		const fmTxId = await mintgate.completeDeposit(
+			'' /*federationId */,
+			'' /*txOutProof*/,
+			'' /*tx*/
+		);
+
+		console.log('Fedimint Transaction ID: ', fmTxId);
+
+		setDepositStatus(DepositStatus.Complete);
+	};
+
 	const getDepositCardProps = (): DepositCardProps => {
 		switch (depositStatus) {
 		case DepositStatus.Address:
@@ -91,7 +105,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 					{
 						// TODO: Remove this simulation button
 						label: 'Complete',
-						onClick: () => setDepositStatus(DepositStatus.Complete),
+						onClick: () => handleCompleteTransaction(),
 					},
 				],
 				infographic: {
