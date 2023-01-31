@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { Admin } from './Admin';
-import { MockMintgate } from './api';
+import { BlockstreamExplorer, MockMintgate } from './api';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { ApiProvider } from './components';
@@ -13,6 +13,9 @@ const gateway_api = process.env.REACT_APP_FEDIMINT_GATEWAY_API;
 // TODO: Implement and use real Mintgate API calling into gateway_api server
 const mintgate = gateway_api ? new MockMintgate() : new MockMintgate();
 
+// TODO: Enable configuration to different block explorers
+const explorer = new BlockstreamExplorer('https://blockstream.info/api/');
+
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
 );
@@ -20,7 +23,7 @@ const root = ReactDOM.createRoot(
 root.render(
 	<React.StrictMode>
 		<ChakraProvider>
-			<ApiProvider props={{ mintgate }}>
+			<ApiProvider props={{ mintgate, explorer }}>
 				<Admin />
 			</ApiProvider>
 		</ChakraProvider>
