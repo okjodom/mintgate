@@ -22,3 +22,24 @@ export interface TransactionStatus {
 	/** Sha256 hash of transaction */
 	transactionHash: string;
 }
+
+export class BlockstreamExplorer implements Explorer {
+	// Base url for the blockstream explorer
+	public baseUrl: string;
+
+	constructor(baseUrl: string) {
+		this.baseUrl = baseUrl;
+	}
+
+	watchAddessForTransaction = async (
+		_address: string
+	): Promise<TransactionStatus> => {
+		return Promise.reject('Not implemented');
+	};
+
+	watchTransactionStatus = async (
+		_txid: string
+	): Promise<TransactionStatus> => {
+		return Promise.reject('Not implemented');
+	};
+}
