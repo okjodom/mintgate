@@ -16,16 +16,11 @@ import {
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { ApiContext, Button, TabHeader } from '.';
+import { TransactionStatus } from '../api';
 
 export const DepositTabHeader = (): JSX.Element => {
 	return <TabHeader>Deposit</TabHeader>;
 };
-
-enum DepositStatus {
-	Address,
-	Pending,
-	Complete,
-}
 
 const truncateStringFormat = (arg: string): string => {
 	return `${arg.substring(0, 15)}......${arg.substring(
@@ -35,11 +30,10 @@ const truncateStringFormat = (arg: string): string => {
 };
 
 export const DepositTab = React.memo(function DepositTab(): JSX.Element {
-	const { mintgate } = React.useContext(ApiContext);
-	const [depositStatus, setDepositStatus] = useState<DepositStatus>(
-		DepositStatus.Address
-	);
+	const { mintgate, explorer } = React.useContext(ApiContext);
+
 	const [address, setAddress] = useState<string>('');
+	const [txStatus, setTxStatus] = useState<TransactionStatus | null>(null);
 
 	useEffect(() => {
 		mintgate.fetchAddress().then((newAddress) => {
@@ -47,52 +41,45 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 		});
 	}, [mintgate]);
 
+	useEffect(() => {
+		if (!address) return;
+
+		// Watch for a transaction to be sent to the address
+		const interval = setInterval(async () => {
+			try {
+				const txStatus = await explorer.watchAddessForTransaction(address);
+
+				if (txStatus) {
+					setTxStatus(txStatus);
+
+					console.log(
+						'Detected a deposit transaction to the address: ',
+						address
+					);
+					clearInterval(interval);
+				}
+			} catch (e) {
+				console.log(e);
+				// TODO: Show error UI
+			}
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, [explorer, address]);
+
 	const mock_txid =
 		'de3d5bf1e3c1b3be2a1e025825f751629390ad60c8f91723e330f2356d99c59b';
 
-	const handleCompleteTransaction = async () => {
-		// TODO: Call to completeDeposit should be automated.
-		// once all the required data is available, complete the deposit without requiring user interaction.
-		const fmTxId = await mintgate.completeDeposit(
-			'' /*federationId */,
-			'' /*txOutProof*/,
-			'' /*tx*/
-		);
-
-		console.log('Fedimint Transaction ID: ', fmTxId);
-
-		setDepositStatus(DepositStatus.Complete);
-	};
-
 	const getDepositCardProps = (): DepositCardProps => {
-		switch (depositStatus) {
-		case DepositStatus.Address:
-			return {
-				content: <ShowDepositAddress address={address} />,
-				actions: [
-					{
-						label: 'Share Address',
-						onClick: () => setDepositStatus(DepositStatus.Pending),
-					},
-					{
-						label: 'Copy Address',
-						onClick: () => setDepositStatus(DepositStatus.Pending),
-					},
-				],
-				infographic: {
-					qrStr: address,
-				},
-			};
-		case DepositStatus.Pending:
+		if (txStatus) {
 			return {
 				content: (
-					<ShowTransaction
+					<WatchTransaction
 						{...{
 							address,
-							txid: mock_txid,
-							amount_btc: 0.00013813,
-							confirmations: 1,
+							txStatus,
 							confirmationsRequired: 3,
+							federationId: 'test',
 						}}
 					/>
 				),
@@ -102,44 +89,33 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 						onClick: () =>
 							window.open(`https://mempool.space/tx/${mock_txid}`, '_blank'),
 					},
-					{
-						// TODO: Remove this simulation button
-						label: 'Complete',
-						onClick: () => handleCompleteTransaction(),
-					},
 				],
 				infographic: {
 					imgUrl:
-							'https://www.maxpixel.net/static/photo/1x/Bitcoin-Logo-Bitcoin-Icon-Bitcoin-Btc-Icon-Currency-6219384.png',
+						'https://www.maxpixel.net/static/photo/1x/Bitcoin-Logo-Bitcoin-Icon-Bitcoin-Btc-Icon-Currency-6219384.png',
 					altText: 'Pending bitcoin transaction',
 				},
 			};
-		case DepositStatus.Complete:
-			return {
-				content: (
-					<ShowTransaction
-						{...{
-							address,
-							txid: mock_txid,
-							amount_btc: 0.00013813,
-							confirmations: 3,
-							confirmationsRequired: 3,
-						}}
-					/>
-				),
-				actions: [
-					{
-						label: 'Close',
-						onClick: () => setDepositStatus(DepositStatus.Address),
-					},
-				],
-				infographic: {
-					imgUrl:
-							'https://iconarchive.com/download/i104526/cjdowner/cryptocurrency/Bitcoin.ico',
-					altText: 'Bitcoin Address QR Code',
-				},
-			};
 		}
+
+		return {
+			content: <ShowDepositAddress address={address} />,
+			actions: [
+				{
+					label: 'Share Address',
+					// TODO: Initiate share address
+					onClick: () => console.log(address),
+				},
+				{
+					label: 'Copy Address',
+					// TODO: Copy address to clipboard
+					onClick: () => console.log(address),
+				},
+			],
+			infographic: {
+				qrStr: address,
+			},
+		};
 	};
 
 	return (
@@ -263,18 +239,53 @@ const ShowDepositAddress = ({
 	);
 };
 
-interface ShowTransactionProps {
-	txid: string;
+interface WatchTransactionProps {
 	address: string;
-	amount_btc: number;
-	confirmations: number;
+	txStatus: TransactionStatus;
 	confirmationsRequired: number;
+	federationId: string;
 }
 
-const ShowTransaction = (props: ShowTransactionProps) => {
-	const { txid, address, amount_btc, confirmations, confirmationsRequired } =
-		props;
-	const progress = (100 * confirmations) / confirmationsRequired;
+const WatchTransaction = ({
+	address,
+	txStatus,
+	confirmationsRequired,
+	federationId,
+}: WatchTransactionProps) => {
+	const { mintgate, explorer } = React.useContext(ApiContext);
+
+	const [status, setStatus] = useState(txStatus);
+
+	useEffect(() => {
+		const interval = setInterval(async () => {
+			try {
+				const txStatus = await explorer.watchTransactionStatus(
+					status.transactionId
+				);
+
+				if (txStatus.confirmations === confirmationsRequired) {
+					// Automatically complete the deposit to federation
+					// TODO: Call to completeDeposit should be automated.
+					// once all the required data is available, complete the deposit without requiring user interaction.
+					const fmTxId = await mintgate.completeDeposit(
+						federationId,
+						txStatus.transactionId,
+						txStatus.transactionHash
+					);
+
+					console.log('Fedimint Transaction ID: ', fmTxId);
+					clearInterval(interval);
+				}
+
+				setStatus(txStatus);
+			} catch (e) {
+				console.log(e);
+				// TODO: Show error UI
+			}
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<>
@@ -290,7 +301,7 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 					Amount:
 				</Text>
 				<Text fontSize='lg' fontWeight='bold'>
-					{amount_btc} BTC
+					{status.amount_btc} BTC
 				</Text>
 			</Flex>
 			<Flex alignItems='center' gap={1}>
@@ -303,22 +314,20 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 						Confirmations:
 					</Text>
 					<Text>
-						{confirmations} / {confirmationsRequired} required
+						{status.confirmations} / {confirmationsRequired} required
 					</Text>
 				</Flex>
 				<Spacer />
-				{progress < 100 ? (
-					<Badge colorScheme='red' variant='outline' mb={-4}>
-						Pending
-					</Badge>
-				) : (
-					<Badge colorScheme='orange' variant='outline' mb={-4}>
-						Complete
-					</Badge>
-				)}
+				<Badge
+					colorScheme={status.status === 'pending' ? 'red' : 'orange'}
+					variant='outline'
+					mb={-4}
+				>
+					{status.status}
+				</Badge>
 			</Flex>
 			<Progress
-				value={progress}
+				value={(100 * status.confirmations) / confirmationsRequired}
 				size='xs'
 				colorScheme='orange'
 				hasStripe
@@ -342,7 +351,7 @@ const ShowTransaction = (props: ShowTransactionProps) => {
 				<Text fontSize='lg' fontWeight='500' color='#1A202C' mr={2}>
 					Transaction ID:
 				</Text>
-				<Text> {truncateStringFormat(txid)}</Text>
+				<Text> {truncateStringFormat(status.transactionId)}</Text>
 			</Flex>
 		</>
 	);
