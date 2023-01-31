@@ -73,4 +73,12 @@ export class MockMintgate implements Mintgate {
 			},
 		});
 	};
+
+	completeDeposit = async (
+		_federationId: string,
+		_txOutProof: string,
+		_tx: string
+	): Promise<string> => {
+		return Promise.resolve('mock_txid');
+	};
 }
