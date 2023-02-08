@@ -32,9 +32,49 @@ export class BlockstreamExplorer implements Explorer {
 	}
 
 	watchAddessForTransaction = async (
-		_address: string
+		address: string
 	): Promise<TransactionStatus> => {
-		return Promise.reject('Not implemented');
+		// GET /address/:address/txs/mempool
+		try {
+			const res: Response = await fetch(
+				`${this.baseUrl}/address/${address}/txs/mempool`
+			);
+
+			if (res.ok) {
+				const txns = await res.json();
+
+				if (txns.length === 0) {
+					return Promise.reject('No transaction found');
+				}
+
+				let txout: { value: number } | undefined;
+
+				const tx = txns.find((tx: any) => {
+					txout = tx.vout.find((out: any) => {
+						return out.scriptpubkey_address === address;
+					});
+					return txout !== undefined;
+				});
+
+				if (!tx || !txout) {
+					return Promise.reject('No transaction found to our address');
+				}
+
+				return Promise.resolve({
+					transactionId: tx.txid,
+					amount_btc: txout.value / 100000000,
+					confirmations: 0,
+					status: 'pending',
+					viewTransactionUrl: `${this.baseUrl}/tx/${tx.txid}`,
+					transactionOutProof: 'unknown', // fixme
+					transactionHash: 'unknown', // fixme
+				});
+			}
+
+			throw new Error('Error fetching transaction');
+		} catch (err) {
+			return Promise.reject(err);
+		}
 	};
 
 	watchTransactionStatus = async (
