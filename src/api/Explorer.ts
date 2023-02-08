@@ -13,6 +13,9 @@ export interface Explorer {
 
 	// Try get transaction proof for a tx with given transaction id
 	fetchTransactionProof: (txid: string) => Promise<TransactionProof>;
+
+	// Fetch the block height at current chain tip
+	fetchLatestBlockHeight: () => Promise<number>;
 }
 
 export interface TransactionStatus {
@@ -46,7 +49,6 @@ export class BlockstreamExplorer implements Explorer {
 	watchAddessForTransaction = async (
 		address: string
 	): Promise<TransactionStatus> => {
-		// GET /address/:address/txs/mempool
 		try {
 			const res: Response = await fetch(
 				`${this.baseUrl}/address/${address}/txs/mempool`
@@ -107,10 +109,16 @@ export class BlockstreamExplorer implements Explorer {
 					return Promise.reject('No transaction found to our address');
 				}
 
+				const chaintip = await this.fetchLatestBlockHeight();
+				const height =
+					tx.status.block_height !== undefined
+						? Number(tx.status.block_height)
+						: chaintip;
+
 				return Promise.resolve({
 					transactionId: tx.txid,
 					amount_btc: txout.value / 100000000,
-					confirmations: 2, // use block height to determing confirmations
+					confirmations: chaintip - height,
 					status: tx.status.confirmed ? 'confirmed' : 'pending',
 					viewTransactionUrl: `${this.baseUrl.replace('/api/', '/')}tx/${
 						tx.txid
@@ -129,12 +137,10 @@ export class BlockstreamExplorer implements Explorer {
 			const proofres: Response = await fetch(
 				`${this.baseUrl}/tx/${txid}/merkleblock-proof`
 			);
-
-			const proof = proofres.ok && (await proofres.json());
+			const proof = proofres.ok && (await proofres.text());
 
 			const hashres: Response = await fetch(`${this.baseUrl}/tx/${txid}/hex`);
-
-			const hash = hashres.ok && (await hashres.json());
+			const hash = hashres.ok && (await hashres.text());
 
 			if (!proof || !hash) {
 				throw new Error('Error fetching transaction proof');
@@ -144,6 +150,21 @@ export class BlockstreamExplorer implements Explorer {
 				transactionOutProof: proof,
 				transactionHash: hash,
 			});
+		} catch (err) {
+			return Promise.reject(err);
+		}
+	};
+
+	fetchLatestBlockHeight = async (): Promise<number> => {
+		try {
+			const res: Response = await fetch(`${this.baseUrl}/blocks/tip/height`);
+
+			if (res.ok) {
+				const height = await res.json();
+				return Promise.resolve(Number(height));
+			}
+
+			throw new Error('Error fetching latest block height');
 		} catch (err) {
 			return Promise.reject(err);
 		}
