@@ -256,17 +256,22 @@ const WatchTransaction = ({
 		const interval = setInterval(async () => {
 			try {
 				const txStatus = await explorer.watchTransactionStatus(
+					address,
 					status.transactionId
 				);
 
 				if (txStatus.confirmations === confirmationsRequired) {
+					const proof = await explorer.fetchTransactionProof(
+						status.transactionId
+					);
+
 					// Automatically complete the deposit to federation
 					// TODO: Call to completeDeposit should be automated.
 					// once all the required data is available, complete the deposit without requiring user interaction.
 					const fmTxId = await mintgate.completeDeposit(
 						federationId,
-						txStatus.transactionId,
-						txStatus.transactionHash
+						proof.transactionOutProof,
+						proof.transactionHash
 					);
 
 					console.log('Fedimint Transaction ID: ', fmTxId);
@@ -278,7 +283,7 @@ const WatchTransaction = ({
 				console.log(e);
 				// TODO: Show error UI
 			}
-		}, 1000);
+		}, 10000);
 
 		return () => clearInterval(interval);
 	}, []);
