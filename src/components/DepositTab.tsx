@@ -67,9 +67,6 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 		return () => clearInterval(interval);
 	}, [explorer, address]);
 
-	const mock_txid =
-		'de3d5bf1e3c1b3be2a1e025825f751629390ad60c8f91723e330f2356d99c59b';
-
 	const getDepositCardProps = (): DepositCardProps => {
 		if (txStatus) {
 			return {
@@ -86,8 +83,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 				actions: [
 					{
 						label: 'View Transaction',
-						onClick: () =>
-							window.open(`https://mempool.space/tx/${mock_txid}`, '_blank'),
+						onClick: () => window.open(txStatus.viewTransactionUrl, '_blank'),
 					},
 				],
 				infographic: {

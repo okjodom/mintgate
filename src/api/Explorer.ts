@@ -65,7 +65,9 @@ export class BlockstreamExplorer implements Explorer {
 					amount_btc: txout.value / 100000000,
 					confirmations: 0,
 					status: 'pending',
-					viewTransactionUrl: `${this.baseUrl}/tx/${tx.txid}`,
+					viewTransactionUrl: `${this.baseUrl.replace('/api/', '/')}tx/${
+						tx.txid
+					}`,
 					transactionOutProof: 'unknown', // fixme
 					transactionHash: 'unknown', // fixme
 				});
