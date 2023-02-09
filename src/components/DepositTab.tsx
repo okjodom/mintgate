@@ -44,8 +44,7 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 	useEffect(() => {
 		if (!address) return;
 
-		// Watch for a transaction to be sent to the address
-		const interval = setInterval(async () => {
+		const observeMempool = async (timer?: NodeJS.Timer) => {
 			try {
 				const txStatus = await explorer.watchAddessForTransaction(address);
 
@@ -56,15 +55,23 @@ export const DepositTab = React.memo(function DepositTab(): JSX.Element {
 						'Detected a deposit transaction to the address: ',
 						address
 					);
-					clearInterval(interval);
+					timer && clearInterval(timer);
 				}
 			} catch (e) {
 				console.log(e);
 				// TODO: Show error UI
 			}
-		}, 1000);
+		};
 
-		return () => clearInterval(interval);
+		// Watch for a transaction to be sent to the address
+		const timer = setInterval(async () => {
+			await observeMempool(timer);
+		}, 5000);
+
+		// We probably don't need to immediately check mempool for transaction
+		// observeMempool(timer);
+
+		return () => clearInterval(timer);
 	}, [explorer, address]);
 
 	const getDepositCardProps = (): DepositCardProps => {

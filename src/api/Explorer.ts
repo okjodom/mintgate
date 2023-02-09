@@ -58,7 +58,7 @@ export class BlockstreamExplorer implements Explorer {
 				const txns = await res.json();
 
 				if (txns.length === 0) {
-					return Promise.reject('No transaction found');
+					return Promise.reject('No transaction found in the mempool');
 				}
 
 				let txout: { value: number } | undefined;
