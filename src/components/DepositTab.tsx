@@ -253,7 +253,7 @@ const WatchTransaction = ({
 	const [status, setStatus] = useState(txStatus);
 
 	useEffect(() => {
-		const interval = setInterval(async () => {
+		const obseTxSequence = async (timer?: NodeJS.Timer) => {
 			try {
 				const txStatus = await explorer.watchTransactionStatus(
 					address,
@@ -275,7 +275,7 @@ const WatchTransaction = ({
 					);
 
 					console.log('Fedimint Transaction ID: ', fmTxId);
-					clearInterval(interval);
+					timer && clearInterval(timer);
 				}
 
 				setStatus(txStatus);
@@ -283,9 +283,15 @@ const WatchTransaction = ({
 				console.log(e);
 				// TODO: Show error UI
 			}
+		};
+
+		const timer = setInterval(async () => {
+			await obseTxSequence(timer);
 		}, 10000);
 
-		return () => clearInterval(interval);
+		obseTxSequence(timer);
+
+		return () => clearInterval(timer);
 	}, []);
 
 	return (
