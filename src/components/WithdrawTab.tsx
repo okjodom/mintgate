@@ -1,19 +1,26 @@
 import React, { useCallback, useState } from 'react';
 import { Box, Stack, TabPanel, Text } from '@chakra-ui/react';
-import { TabHeader, Button, Input } from '.';
+import { TabHeader, Button, Input, ApiContext } from '.';
 
 export const WithdrawTabHeader = () => {
 	return <TabHeader>Withdraw</TabHeader>;
 };
 
 interface WithdrawObject {
-	amount: string;
+	amount: number;
 	walletAddress: string;
 }
 
-export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
+export interface WithdrawTabProps {
+	federationId: string;
+}
+
+export const WithdrawTab = React.memo(function WithdrawTab({
+	federationId,
+}: WithdrawTabProps): JSX.Element {
+	const { mintgate } = React.useContext(ApiContext);
 	const [withdrawObject, setWithdrawObject] = useState<WithdrawObject>({
-		amount: '',
+		amount: 0,
 		walletAddress: '',
 	});
 	const [error, setError] = useState<string>('');
@@ -28,13 +35,19 @@ export const WithdrawTab = React.memo(function WithdrawTab(): JSX.Element {
 		[withdrawObject]
 	);
 
-	const createWithdrawal = () => {
-		console.log('withdrawal created');
+	const createWithdrawal = async () => {
 		const { amount, walletAddress } = withdrawObject;
 
-		if (!amount && !walletAddress) {
-			setError('amount and address cannot be empty');
-			return;
+		try {
+			const txId = await mintgate.requestWithdrawal(
+				federationId,
+				amount,
+				walletAddress
+			);
+			console.log(txId);
+		} catch (err) {
+			console.log(err);
+			setError('Failed to request withdrawal');
 		}
 	};
 

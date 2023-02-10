@@ -35,7 +35,7 @@ enum OpenTab {
 }
 
 export const FederationCard = (props: FederationCardProps): JSX.Element => {
-	const { mint_pubkey, details } = props.federation;
+	const { federation_id, mint_pubkey, details } = props.federation;
 
 	const [showDetails, setShowDetails] = useState<boolean>(false);
 	const [tab, setOpenTab] = useState<{ open: OpenTab; mru: OpenTab }>({
@@ -107,7 +107,7 @@ export const FederationCard = (props: FederationCardProps): JSX.Element => {
 						<TabPanels>
 							<InfoTab {...details} />
 							<DepositTab {...details} />
-							<WithdrawTab {...details} />
+							<WithdrawTab {...details} federationId={federation_id} />
 						</TabPanels>
 					</Collapse>
 				</Tabs>
