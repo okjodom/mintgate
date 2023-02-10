@@ -81,4 +81,12 @@ export class MockMintgate implements Mintgate {
 	): Promise<string> => {
 		return Promise.resolve('mock_txid');
 	};
+
+	requestWithdrawal = async (
+		_federationId: string,
+		_amountSat: number,
+		_address: string
+	): Promise<string> => {
+		return Promise.resolve('transaction_id');
+	};
 }
