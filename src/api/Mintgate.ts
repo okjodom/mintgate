@@ -17,6 +17,19 @@ export interface Mintgate {
 		txOutProof: string,
 		tx: string
 	) => Promise<string>;
+
+	/**
+	 *  Request a withdrawal from a fedration served by the Gateway
+	 * @param federationId  id of the federation to withdraw from
+	 * @param amountSat the amount in satoshis to be withdrawn from the federation
+	 * @param address the bitcoin address to withdraw to
+	 * @returns `TransactionId` from the Fedimint federation
+	 */
+	requestWithdrawal: (
+		federationId: string,
+		amountSat: number,
+		address: string
+	) => Promise<string>;
 }
 
 // GatewayInfo is the information returned by the Gateway server
