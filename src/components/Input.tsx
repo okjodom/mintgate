@@ -4,7 +4,7 @@ import { InputGroup, Text, Input as CustomInput } from '@chakra-ui/react';
 export type InputProps = {
 	labelName: string;
 	placeHolder: string;
-	value: string;
+	value: string | number;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	name?: string;
 };
