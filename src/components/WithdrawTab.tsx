@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
 	Box,
+	Flex,
 	HStack,
 	Modal,
 	ModalBody,
@@ -12,6 +13,7 @@ import {
 	Stack,
 	TabPanel,
 	Text,
+	useToast,
 	VStack,
 } from '@chakra-ui/react';
 import { TabHeader, Button, Input, ApiContext } from '.';
@@ -24,7 +26,7 @@ export const WithdrawTabHeader = () => {
 export interface TransactionTabProps {
 	address: string;
 	amount: number;
-	txStatus: 'pending' | 'success' | 'failed';
+	txStatus: 'pending' | 'confirmed';
 	confirmationsRequired: number;
 	federationId?: string;
 	txId: string;
@@ -105,7 +107,6 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 			console.log(txId, 'trasaction id:::');
 			setTxId(txId);
 			setTransactionList([
-				...transactionList,
 				{
 					address,
 					amount,
@@ -114,8 +115,10 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 					txStatus: 'pending',
 					txId,
 				},
+				...transactionList,
 			]);
-			setModalState(true);
+			setWithdrawObject({ ...withdrawObject, amount: 0, address: '' });
+			setModalState(false);
 		} catch (err) {
 			console.log(err);
 			setError('Failed to request withdrawal');
@@ -123,18 +126,18 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 	};
 
 	return (
-		<TabPanel ml='1px' mr='1px' p={{ bas: '4px', md: '16px', lg: '16px' }}>
+		<TabPanel ml='1px' mr='1px' p={{ base: '4px', md: '16px', lg: '16px' }}>
 			<Stack spacing='4' maxWidth={{ base: '100%', md: 'md', lg: 'md' }}>
 				<Input
-					labelName=' Amount:'
-					placeHolder='Enter amount'
+					labelName=' Amount (sats):'
+					placeHolder='Enter amount in sats'
 					value={withdrawObject.amount}
 					onChange={(e) => handleInputChange(e)}
 					name='amount'
 				/>
 				<Input
 					labelName='Your address:'
-					placeHolder='Enter wallet address '
+					placeHolder='Enter your btc address '
 					value={withdrawObject.address}
 					onChange={(e) => handleInputChange(e)}
 					name='address'
@@ -198,101 +201,53 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 });
 
 const TransactionModal = (props: ModalProps): JSX.Element => {
-	const {
-		open,
-		onCloseClick,
-		onModalClick,
-		amount,
-		address,
-		startWithdrawal,
-		txStatus,
-	} = props;
-	const [step, setStep] = useState<number>(0);
+	const { open, onModalClick, amount, address, startWithdrawal } = props;
+	const toast = useToast();
 
 	return (
 		<div>
 			<>
-				{step === 0 && (
-					<Modal onClose={onModalClick} isOpen={open} isCentered>
-						<ModalOverlay />
-						<ModalContent>
-							<ModalHeader>Confirm Withdrawal</ModalHeader>
-							<ModalCloseButton />
-							<ModalBody>
-								<HStack justifyContent='space-between'>
-									<Box>
-										<Text>Transaction type:</Text>
-										<Text>Withdrawal</Text>
-									</Box>
-									<Box>
-										<Text>Status: </Text>
-										<Text>{txStatus}</Text>
-									</Box>
-								</HStack>
-								<VStack
-									mt='4'
-									alignItems='flex-start'
-									justifyContent='space-between'
-								>
-									<Box>
-										<Text>Amount:</Text>
-										<Text>{amount} sats</Text>
-									</Box>
-									<Text>from</Text>
-									<Box>
-										<Text>Address:</Text>
-										<Text>{truncateStringFormat(address)}</Text>
-									</Box>
-								</VStack>
-							</ModalBody>
-							<ModalFooter>
-								<Button
-									onClick={() => {
-										if (startWithdrawal) {
-											startWithdrawal();
-											setStep(1);
-										}
-									}}
-									fontSize={{ base: '12px', md: '13px', lg: '16px' }}
-									p={{ base: '10px', md: '13px', lg: '16px' }}
-								>
-									Proceed
-								</Button>
-							</ModalFooter>
-						</ModalContent>
-					</Modal>
-				)}
-
-				{step === 1 && (
-					<Modal onClose={onModalClick} isOpen={open} isCentered>
-						<ModalOverlay />
-						<ModalContent>
-							<ModalHeader
-								display='flex'
-								alignItems='center'
-								justifyContent='space-between'
+				<Modal onClose={onModalClick} isOpen={open} isCentered>
+					<ModalOverlay />
+					<ModalContent>
+						<ModalHeader>Confirm Withdrawal</ModalHeader>
+						<ModalCloseButton />
+						<ModalBody>
+							<VStack alignItems='flex-start' justifyContent='space-between'>
+								<Box>
+									<Text>Amount:</Text>
+									<Text>{amount} sats</Text>
+								</Box>
+								<Text>to</Text>
+								<Box>
+									<Text>Address:</Text>
+									<Text>{truncateStringFormat(address)}</Text>
+								</Box>
+							</VStack>
+						</ModalBody>
+						<ModalFooter>
+							<Button
+								onClick={() => {
+									if (startWithdrawal) {
+										startWithdrawal();
+										toast({
+											title: 'Withdrawal created.',
+											description: 'Please check your transaction history',
+											status: 'success',
+											duration: 5000,
+											isClosable: true,
+											position: 'top-right',
+										});
+									}
+								}}
+								fontSize={{ base: '12px', md: '13px', lg: '16px' }}
+								p={{ base: '10px', md: '13px', lg: '16px' }}
 							>
-								Success
-							</ModalHeader>
-							<ModalCloseButton />
-							<ModalBody>
-								<Text>
-									Withdrawal created created successfully, view transaction
-									progress below
-								</Text>
-							</ModalBody>
-							<ModalFooter>
-								<Button
-									onClick={onCloseClick}
-									fontSize={{ base: '12px', md: '13px', lg: '16px' }}
-									p={{ base: '10px', md: '13px', lg: '16px' }}
-								>
-									View Progress
-								</Button>
-							</ModalFooter>
-						</ModalContent>
-					</Modal>
-				)}
+								Confirm
+							</Button>
+						</ModalFooter>
+					</ModalContent>
+				</Modal>
 			</>
 		</div>
 	);
@@ -349,64 +304,62 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 			cursor='pointer'
 			onClick={toggle}
 		>
-			{/* Transaction Summary */}
 			<>
 				{!details && (
 					<>
 						<HStack justifyContent='space-between'>
-							<Text fontWeight='600'>You withdrew {amount} sats</Text>
-							<Text fontWeight='600'>${(amount / 4608.93).toFixed(2)}</Text>
+							<Text fontWeight='600'>Requested withdrawal</Text>
+							<Text fontWeight='600'>{amount} sats</Text>
 						</HStack>
 						<HStack mt='2' alignItems='baseline' justifyContent='space-between'>
 							<Text fontSize='15px'>{new Date().toDateString()}</Text>
-							<Text color={condition ? 'green' : 'red'} fontWeight='600'>
-								{condition ? 'Success' : 'Failed'}
+							<Text color={condition ? 'green' : 'orange'} fontWeight='600'>
+								{condition ? 'Confirmed' : 'Pending'}
 							</Text>
 						</HStack>
 					</>
 				)}
 			</>
 
-			{/* Transaction History */}
 			{details && (
 				<>
 					<Box textAlign='center'>
 						<Text mt='8' mb='8' fontWeight='600'>
-							You withdrew {amount} sats valued at $(
-							{(amount / 4608.93).toFixed(2)})
+							Requested withdrawal from {federationId}
 						</Text>
-						<TransactionInfo title='Federation ID' info={federationId} />
+						<TransactionInfo title='Amount' info={`${amount} sats`} />
 						<TransactionInfo
-							title='Recipient'
+							title='Address'
 							info={truncateStringFormat(address)}
 						/>
-						<TransactionInfo title='Transaction Type' info={'Withdrawal'} />
 						<TransactionInfo
 							title='Transaction ID'
 							info={txId || txStatus?.transactionId}
 						/>
-						<TransactionInfo title='Confirmations' info='3' />
+						<TransactionInfo
+							title='Confirmations'
+							info={`${txStatus?.confirmations ?? 0} |`}
+						>
+							<Text fontWeight='600' color={condition ? 'green' : 'orange'}>
+								{condition ? ' confirmed' : ' pending'}
+							</Text>
+						</TransactionInfo>
 						<TransactionInfo
 							title='Date | time'
 							info={`${new Date().toDateString()} | ${new Date().toLocaleTimeString()}`}
 						/>
-						<TransactionInfo
-							title='Status'
-							info={condition ? 'Success' : 'Failed'}
-							color={condition ? 'green' : 'red'}
-						/>
 						<HStack width='100%' mt='8' spacing='4'>
 							<Button
 								onClick={() => {
-									console.log('clicked');
+									window.open(txStatus?.viewTransactionUrl);
 								}}
 								width={{ base: '100%' }}
 							>
-								Share
+								View
 							</Button>
 							<Button
 								onClick={() => {
-									console.log('clicked');
+									setDetails(false);
 								}}
 								width={{ base: '100%' }}
 							>
@@ -441,12 +394,12 @@ const TransactionInfo = (props: TransactionInfoProps): JSX.Element => {
 			<Text opacity={0.87} fontSize='15px' color='#2d2d2d'>
 				{title}
 			</Text>
-			<Box>
+			<Flex gap='4px' alignItems='center'>
 				<Text onClick={onClick} fontWeight='500' color={color} fontSize='15px'>
 					{info}
 				</Text>
 				{children}
-			</Box>
+			</Flex>
 		</HStack>
 	);
 };
