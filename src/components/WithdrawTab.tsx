@@ -23,22 +23,6 @@ export const WithdrawTabHeader = () => {
 	return <TabHeader>Withdraw</TabHeader>;
 };
 
-export interface TransactionTabProps {
-	address: string;
-	amount: number;
-	txStatus: 'pending' | 'confirmed';
-	confirmationsRequired: number;
-	federationId?: string;
-	txId: string;
-}
-
-export interface ModalProps extends TransactionTabProps {
-	open: boolean;
-	onModalClick: () => void;
-	onCloseClick: () => void;
-	startWithdrawal: () => void;
-}
-
 interface WithdrawObject {
 	amount: number;
 	address: string;
@@ -66,10 +50,9 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 	const [error, setError] = useState<string>('');
 	const [modalState, setModalState] = useState<boolean>(false);
 	const [transactionList, setTransactionList] = useState<
-		Array<TransactionTabProps>
+		Array<TransactionViewProps>
 	>([]);
 	const { amount, address } = withdrawObject;
-	const [txId, setTxId] = useState<string>('');
 
 	const handleInputChange = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +79,6 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 	};
 
 	const startWithdrawal = async () => {
-		console.log('withdrawal created');
 		try {
 			const txId = await mintgate.requestWithdrawal(
 				federationId,
@@ -104,15 +86,12 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 				address
 			);
 
-			console.log(txId, 'trasaction id:::');
-			setTxId(txId);
 			setTransactionList([
 				{
 					address,
 					amount,
 					confirmationsRequired: 3,
 					federationId,
-					txStatus: 'pending',
 					txId,
 				},
 				...transactionList,
@@ -162,13 +141,13 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 						{transactionList.length !== 0 && (
 							<>
 								<Text color='#2d2d2d' fontSize='18px' fontWeight='600'>
-									Transaction History
+									Withdrawal History
 								</Text>
 								<Box>
 									{transactionList?.map((transaction) => {
 										return (
-											<TransactionTab
-												key={transaction.federationId}
+											<TransactionView
+												key={transaction.txId}
 												{...transaction}
 											/>
 										);
@@ -180,34 +159,44 @@ export const WithdrawTab = React.memo(function WithdrawTab({
 				}
 			</Stack>
 			{modalState && (
-				<TransactionModal
+				<ConfirmWithdrawModal
 					open={modalState}
-					onModalClick={() => {
+					txRequest={{ amount, address }}
+					onModalClickCallback={() => {
 						setModalState(false);
 					}}
-					onCloseClick={() => {
+					onCloseClickCallback={() => {
 						setModalState(false);
 					}}
-					confirmationsRequired={3}
-					amount={amount}
-					address={address}
-					txStatus='pending'
-					startWithdrawal={startWithdrawal}
-					txId={txId}
+					startWithdrawalCallback={startWithdrawal}
 				/>
 			)}
 		</TabPanel>
 	);
 });
 
-const TransactionModal = (props: ModalProps): JSX.Element => {
-	const { open, onModalClick, amount, address, startWithdrawal } = props;
+export interface ConfirmWithdrawModalProps {
+	open: boolean;
+	txRequest: {
+		amount: number;
+		address: string;
+	};
+	onModalClickCallback: () => void;
+	onCloseClickCallback: () => void;
+	startWithdrawalCallback: () => void;
+}
+
+const ConfirmWithdrawModal = (
+	props: ConfirmWithdrawModalProps
+): JSX.Element => {
+	const { open, txRequest, onModalClickCallback, startWithdrawalCallback } =
+		props;
 	const toast = useToast();
 
 	return (
 		<div>
 			<>
-				<Modal onClose={onModalClick} isOpen={open} isCentered>
+				<Modal onClose={onModalClickCallback} isOpen={open} isCentered>
 					<ModalOverlay />
 					<ModalContent>
 						<ModalHeader>Confirm Withdrawal</ModalHeader>
@@ -216,20 +205,20 @@ const TransactionModal = (props: ModalProps): JSX.Element => {
 							<VStack alignItems='flex-start' justifyContent='space-between'>
 								<Box>
 									<Text>Amount:</Text>
-									<Text>{amount} sats</Text>
+									<Text>{txRequest.amount} sats</Text>
 								</Box>
 								<Text>to</Text>
 								<Box>
 									<Text>Address:</Text>
-									<Text>{truncateStringFormat(address)}</Text>
+									<Text>{truncateStringFormat(txRequest.address)}</Text>
 								</Box>
 							</VStack>
 						</ModalBody>
 						<ModalFooter>
 							<Button
 								onClick={() => {
-									if (startWithdrawal) {
-										startWithdrawal();
+									if (startWithdrawalCallback) {
+										startWithdrawalCallback();
 										toast({
 											title: 'Withdrawal created.',
 											description: 'Please check your transaction history',
@@ -253,34 +242,30 @@ const TransactionModal = (props: ModalProps): JSX.Element => {
 	);
 };
 
-const TransactionTab = (props: TransactionTabProps): JSX.Element => {
+export interface TransactionViewProps {
+	amount: number;
+	address: string;
+	txId: string;
+	confirmationsRequired: number;
+	federationId?: string;
+}
+
+const TransactionView = (props: TransactionViewProps): JSX.Element => {
 	const { explorer } = React.useContext(ApiContext);
 	const { confirmationsRequired, amount, address, txId, federationId } = props;
-	const [txStatus, setTxStatus] = useState<TransactionStatus>();
-	const [condition, setCondition] = useState<boolean>(false);
-	const [details, setDetails] = useState<boolean>(false);
 
-	const toggle = () => setDetails(!details);
+	const [txStatus, setTxStatus] = useState<TransactionStatus | null>(null);
+	const [showDetails, setShowDetails] = useState<boolean>(false);
 
-	// track trnasactions
+	// track transactions
 	useEffect(() => {
-		const { watchTransactionStatus } = explorer;
-
 		const watchWithdrawal = async (timer?: NodeJS.Timer) => {
 			try {
-				const currStatus = await watchTransactionStatus(address, txId);
+				const currStatus = await explorer.watchTransactionStatus(address, txId);
 
-				if (
-					currStatus.status === 'confirmed' &&
-					currStatus.confirmations === confirmationsRequired
-				) {
-					setCondition(true);
-				}
 				if (currStatus.confirmations === confirmationsRequired) {
-					console.log('withdrawal successful');
 					timer && clearInterval(timer);
 				}
-
 				setTxStatus(currStatus);
 			} catch (e) {
 				console.log(e);
@@ -291,8 +276,8 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 			await watchWithdrawal(timer);
 		}, 5000);
 
-		return clearInterval(timer);
-	}, []);
+		return () => clearInterval(timer);
+	}, [explorer, address, txId]);
 
 	return (
 		<Box
@@ -302,10 +287,10 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 			boxShadow='rgba(255, 255, 255, 0.2) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px'
 			mb='4'
 			cursor='pointer'
-			onClick={toggle}
+			onClick={() => txStatus && setShowDetails(!showDetails)}
 		>
 			<>
-				{!details && (
+				{!showDetails && (
 					<>
 						<HStack justifyContent='space-between'>
 							<Text fontWeight='600'>Requested withdrawal</Text>
@@ -313,40 +298,52 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 						</HStack>
 						<HStack mt='2' alignItems='baseline' justifyContent='space-between'>
 							<Text fontSize='15px'>{new Date().toDateString()}</Text>
-							<Text color={condition ? 'green' : 'orange'} fontWeight='600'>
-								{condition ? 'Confirmed' : 'Pending'}
+							<Text
+								color={
+									!txStatus
+										? 'red'
+										: txStatus.status === 'confirmed'
+											? 'green'
+											: 'orange'
+								}
+								fontWeight='600'
+							>
+								{txStatus?.status || 'waiting'}
 							</Text>
 						</HStack>
 					</>
 				)}
 			</>
 
-			{details && (
+			{showDetails && txStatus && (
 				<>
 					<Box textAlign='center'>
 						<Text mt='8' mb='8' fontWeight='600'>
 							Requested withdrawal from {federationId}
 						</Text>
-						<TransactionInfo title='Amount' info={`${amount} sats`} />
-						<TransactionInfo
+						<TransactionDetail title='Amount' detail={`${amount} sats`} />
+						<TransactionDetail
 							title='Address'
-							info={truncateStringFormat(address)}
+							detail={truncateStringFormat(address)}
 						/>
-						<TransactionInfo
+						<TransactionDetail
 							title='Transaction ID'
-							info={txId || txStatus?.transactionId}
+							detail={truncateStringFormat(txStatus?.transactionId ?? txId)}
 						/>
-						<TransactionInfo
+						<TransactionDetail
 							title='Confirmations'
-							info={`${txStatus?.confirmations ?? 0} |`}
+							detail={`${txStatus?.confirmations ?? 0} |`}
 						>
-							<Text fontWeight='600' color={condition ? 'green' : 'orange'}>
-								{condition ? ' confirmed' : ' pending'}
+							<Text
+								fontWeight='600'
+								color={txStatus?.status ? 'green' : 'orange'}
+							>
+								{txStatus?.status === 'confirmed' ? ' confirmed' : ' pending'}
 							</Text>
-						</TransactionInfo>
-						<TransactionInfo
+						</TransactionDetail>
+						<TransactionDetail
 							title='Date | time'
-							info={`${new Date().toDateString()} | ${new Date().toLocaleTimeString()}`}
+							detail={`${new Date().toDateString()} | ${new Date().toLocaleTimeString()}`}
 						/>
 						<HStack width='100%' mt='8' spacing='4'>
 							<Button
@@ -359,7 +356,7 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 							</Button>
 							<Button
 								onClick={() => {
-									setDetails(false);
+									setShowDetails(false);
 								}}
 								width={{ base: '100%' }}
 							>
@@ -375,14 +372,14 @@ const TransactionTab = (props: TransactionTabProps): JSX.Element => {
 
 export interface TransactionInfoProps {
 	title: string;
-	info?: string | number;
+	detail?: string | number;
 	children?: React.ReactNode;
 	onClick?: () => void;
 	color?: string;
 }
 
-const TransactionInfo = (props: TransactionInfoProps): JSX.Element => {
-	const { title, info, children, onClick, color } = props;
+const TransactionDetail = (props: TransactionInfoProps): JSX.Element => {
+	const { title, detail, children, onClick, color } = props;
 	return (
 		<HStack
 			borderBottom='1px solid #2d2d2d'
@@ -396,7 +393,7 @@ const TransactionInfo = (props: TransactionInfoProps): JSX.Element => {
 			</Text>
 			<Flex gap='4px' alignItems='center'>
 				<Text onClick={onClick} fontWeight='500' color={color} fontSize='15px'>
-					{info}
+					{detail}
 				</Text>
 				{children}
 			</Flex>
