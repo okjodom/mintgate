@@ -87,6 +87,8 @@ export class MockMintgate implements Mintgate {
 		_amountSat: number,
 		_address: string
 	): Promise<string> => {
-		return Promise.resolve('transaction_id');
+		return Promise.resolve(
+			'de3d5bf1e3c1b3be2a1e025825f751629390ad60c8f91723e330f2356d99c59b'
+		);
 	};
 }
